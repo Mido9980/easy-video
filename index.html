@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>EASY VIDEO — وكيل الفيديو بتاعك</title>
+<meta name="description" content="اكتب وصف الفيديو واحنا نعملهولك — وكيل الفيديو من EASY CODE">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root { --bg:#000; --panel:#0e0e10; --line:#232327; --txt:#f2f2f3; --mut:#8f8f99; --teal:#48d1cc; --amber:#e8b04b; --pink:#ff2e63; }
+  html,body { height:100%; }
+  body { background:var(--bg); color:var(--txt); font-family:"Segoe UI",Tahoma,"Noto Kufi Arabic",Arial,sans-serif; display:flex; flex-direction:column; }
+  header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(0,0,0,.92); backdrop-filter:blur(8px); z-index:10; }
+  .logo { font-weight:800; font-size:1.05rem; letter-spacing:.5px; }
+  .logo em { font-style:normal; color:var(--teal); }
+  .hbtn { background:none; border:1px solid var(--line); color:var(--mut); border-radius:10px; padding:6px 10px; font-size:.85rem; font-family:inherit; cursor:pointer; }
+  #main { flex:1; overflow-y:auto; }
+  .col { max-width:46rem; margin:0 auto; padding:16px 14px 130px; }
+  /* welcome */
+  .hello { text-align:center; padding:48px 10px 20px; }
+  .hello .ic { font-size:2.6rem; }
+  .hello h1 { font-size:1.6rem; margin:8px 0; font-weight:800; }
+  .hello h1 em { font-style:normal; color:var(--teal); }
+  .hello p { color:var(--mut); font-size:.95rem; }
+  .chips { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+  .chip { background:var(--panel); border:1px solid var(--line); color:var(--txt); border-radius:99px; padding:8px 14px; font-size:.83rem; font-family:inherit; cursor:pointer; }
+  .chip:active { transform:scale(.96); }
+  /* messages */
+  .msg { display:flex; gap:10px; margin:16px 0; }
+  .msg .av { width:34px; height:34px; border-radius:50%; background:var(--panel); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex:none; }
+  .msg .bub { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px 14px; font-size:.92rem; max-width:78%; line-height:1.7; }
+  .msg.me { flex-direction:row-reverse; }
+  .msg.me .bub { background:#17272a; border-color:#1f3a3e; }
+  .msg .bub video { width:100%; max-width:270px; border-radius:10px; margin:8px 0; display:block; background:#000; }
+  .msg .bub a.dl, .msg .bub button.dl { display:block; background:var(--teal); color:#062523; font-weight:700; text-align:center; border-radius:10px; padding:8px 12px; margin:8px 0 2px; font-size:.85rem; border:none; font-family:inherit; text-decoration:none; }
+  .typing { display:inline-flex; gap:4px; padding:4px 2px; }
+  .typing i { width:7px; height:7px; background:var(--mut); border-radius:50%; animation:bl 1s infinite; }
+  .typing i:nth-child(2){ animation-delay:.2s } .typing i:nth-child(3){ animation-delay:.4s }
+  @keyframes bl { 0%,100%{opacity:.25} 50%{opacity:1} }
+  /* composer */
+  .composer { position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,.94); backdrop-filter:blur(8px); border-top:1px solid var(--line); padding:10px 14px calc(12px + env(safe-area-inset-bottom)); z-index:10; }
+  .cbox { max-width:46rem; margin:0 auto; }
+  .cinrow { display:flex; gap:8px; margin-bottom:8px; justify-content:center; flex-wrap:wrap; }
+  .cinchip { border-radius:99px; padding:6px 13px; font-size:.8rem; border:1px solid var(--line); background:var(--panel); color:var(--mut); cursor:pointer; font-family:inherit; }
+  .cinchip.on { border-color:var(--amber); color:var(--amber); }
+  .inrow { display:flex; gap:8px; align-items:flex-end; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:8px; }
+  .inrow textarea { flex:1; background:none; border:none; outline:none; color:var(--txt); font-family:inherit; font-size:.95rem; resize:none; max-height:110px; line-height:1.5; }
+  .inrow .attach { background:none; border:none; font-size:1.25rem; cursor:pointer; padding:4px 6px; }
+  .inrow .send { background:var(--teal); color:#062523; border:none; border-radius:12px; width:38px; height:38px; font-size:1.1rem; cursor:pointer; flex:none; }
+  .inrow .send:disabled { opacity:.4; }
+  .small { text-align:center; color:#555; font-size:.72rem; margin-top:6px; }
+  /* payment sheet */
+  .sheet { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:20; display:none; align-items:flex-end; justify-content:center; }
+  .sheet.on { display:flex; }
+  .sheet .card { background:#101014; border:1px solid var(--line); border-radius:20px 20px 0 0; width:100%; max-width:34rem; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); max-height:88vh; overflow-y:auto; }
+  .sheet h3 { font-size:1.15rem; margin-bottom:4px; }
+  .sheet .sub { color:var(--mut); font-size:.85rem; margin-bottom:14px; }
+  .close { float:left; background:none; border:none; color:var(--mut); font-size:1.2rem; cursor:pointer; }
+  .f { margin-bottom:12px; }
+  .f label { display:block; font-size:.8rem; color:var(--mut); margin-bottom:5px; }
+  .f input, .f select { width:100%; background:#0a0a0c; border:1px solid var(--line); color:var(--txt); border-radius:10px; padding:10px 12px; font-size:.92rem; font-family:inherit; }
+  .btn { display:block; width:100%; border:none; border-radius:12px; padding:12px; font-weight:700; font-size:.92rem; font-family:inherit; cursor:pointer; }
+  .btn.t { background:var(--teal); color:#062523; }
+  .btn.a { background:var(--amber); color:#241703; }
+  .btn.g { background:var(--panel); border:1px solid var(--line); color:var(--txt); }
+  .payinfo { background:#161620; border:1px solid #2b2416; border-radius:12px; padding:12px 14px; margin-bottom:14px; }
+  .payinfo .amt { font-size:1.6rem; font-weight:800; color:var(--amber); }
+  .payinfo .wno { font-size:1.2rem; font-weight:800; color:var(--teal); direction:ltr; }
+  .msg-notice { border-radius:10px; padding:9px 12px; font-size:.85rem; margin-top:10px; display:none; }
+  .msg-notice.ok { display:block; background:rgba(93,211,158,.12); color:#5dd39e; border:1px solid #2c5a45; }
+  .msg-notice.err { display:block; background:rgba(255,46,99,.1); color:#ff8fa8; border:1px solid #5a2233; }
+  table { width:100%; border-collapse:collapse; font-size:.82rem; margin-top:8px; }
+  th,td { border:1px solid var(--line); padding:7px 6px; text-align:center; }
+  th { color:var(--teal); background:#0a0a0c; }
+  .mini { padding:4px 9px; border-radius:8px; border:1px solid var(--line); background:none; color:var(--txt); font-size:.78rem; margin:2px; cursor:pointer; font-family:inherit; }
+  .mini.ok { color:#5dd39e; border-color:#2c5a45; } .mini.no { color:#ff8fa8; border-color:#5a2233; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 14px; display:inline-block; margin:0 6px 8px 0; min-width:100px; }
+  .stat b { display:block; font-size:1.25rem; color:var(--amber); } .stat i { font-style:normal; color:var(--mut); font-size:.75rem; }
+  .toast { position:fixed; bottom:76px; left:50%; transform:translateX(-50%); background:#1a1a22; border:1px solid var(--line); border-radius:12px; padding:10px 18px; font-size:.88rem; z-index:99; display:none; max-width:88%; text-align:center; }
+  .tag { display:inline-block; background:#20202a; color:var(--teal); border-radius:99px; padding:2px 10px; font-size:.72rem; margin:2px; }
+  .tag.amb { color:var(--amber); }
+</style>
+</head>
+<body>
+<header>
+  <button class="hbtn" id="adminBtn">⚙ لوحة التحكم</button>
+  <div class="logo">EASY <em>VIDEO</em> 🎬</div>
+  <button class="hbtn" id="proBtn">✨ التفعيل</button>
+</header>
+
+<div id="main"><div class="col" id="chat">
+  <div class="hello" id="hello">
+    <div class="ic">🎬</div>
+    <h1>أهلاً بيك في <em>EASY VIDEO</em></h1>
+    <p>اكتب الوصف اللي في دماغك وأنا أعملك فيديو جاهز للنشر</p>
+    <div class="chips" id="chips"></div>
+  </div>
+</div></div>
+
+<div class="composer">
+  <div class="cbox">
+    <div class="cinrow">
+      <button class="cinchip" id="cinChip">🎬 سينما AI — واقعي 100%</button>
+      <span class="tag" id="credTag" style="display:none"></span>
+    </div>
+    <div class="inrow">
+      <button class="attach" id="attachBtn">📎</button>
+      <textarea id="prompt" rows="1" placeholder="اكتب فكرتك... مثال: فيديو عن القهوة الصبح"></textarea>
+      <button class="send" id="sendBtn">↑</button>
+    </div>
+    <div class="small">EASY VIDEO ✨ من EASY CODE — الفيديو بيتبني على جهازك وبيتملي بياناتك عندها</div>
+  </div>
+</div>
+
+<input type="file" id="photoIn" accept="image/*" style="display:none">
+
+<!-- payment sheet -->
+<div class="sheet" id="paySheet">
+  <div class="card">
+    <button class="close" id="payClose">✕</button>
+    <h3 id="payTitle">تفعيل وضع السينما 🎬</h3>
+    <p class="sub" id="paySub">حوّل مرة واحدة وخد 3 فيديوهات واقعية بصوت — 8 ثواني لكل فيديو</p>
+    <div class="payinfo" id="payInfo">
+      <div>السعر: <span class="amt"><span id="priceEl">--</span> جنيه</span> <span class="sub" id="credEl"></span></div>
+      <div style="margin-top:6px">حوّل على <b id="wtypeEl">...</b>:</div>
+      <div class="wno" id="wnoEl">...</div>
+    </div>
+    <div class="f"><label>رقم الموبايل اللي حوّلت منه</label><input type="tel" id="payPhone" placeholder="01xxxxxxxxx"></div>
+    <div class="f"><label>رقم عملية التحويل</label><input type="text" id="payRef" placeholder="مثال: VF998877"></div>
+    <button class="btn a" id="paySubmit">إرسال طلب التفعيل</button>
+    <button class="btn g" id="payCheck" style="margin-top:8px">التحقق من حالة التفعيل</button>
+    <div class="msg-notice" id="payMsg"></div>
+  </div>
+</div>
+
+<!-- admin sheet -->
+<div class="sheet" id="adminSheet">
+  <div class="card">
+    <button class="close" id="adminClose">✕</button>
+    <div id="adminLogin">
+      <h3>لوحة التحكم ⚙</h3>
+      <p class="sub">للأدمن بس</p>
+      <div class="f"><label>كلمة المرور</label><input type="password" id="adminPass"></div>
+      <button class="btn t" id="adminLoginBtn">دخول</button>
+      <div class="msg-notice" id="adminMsg"></div>
+    </div>
+    <div id="adminPanel" style="display:none">
+      <h3>لوحة التحكم ⚙</h3>
+      <div id="statsBox"></div>
+      <p class="sub" style="margin:14px 0 4px">طلبات التفعيل المعلقة</p>
+      <div id="pendingBox" class="sub">...</div>
+      <p class="sub" style="margin:14px 0 4px">الإعدادات</p>
+      <div class="f"><label>نوع المحفظة</label><select id="setWtype"><option>فودافون كاش</option><option>اتصالات كاش</option><option>اورنج كاش</option><option>انستاباي</option></select></div>
+      <div class="f"><label>رقم المحفظة</label><input type="text" id="setWno"></div>
+      <div class="f"><label>السعر (جنيه)</label><input type="text" id="setPrice" inputmode="numeric"></div>
+      <div class="f"><label>عدد الفيديوهات لكل دفعة</label><input type="text" id="setCredits" inputmode="numeric"></div>
+      <button class="btn t" id="saveSetBtn">حفظ الإعدادات</button>
+      <div class="msg-notice" id="setMsg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "https://shark-vision-labs.base44.app/functions";
+const LS = { phone: 'ev_phone', cinema: 'ev_cinema' };
+const $ = id => document.getElementById(id);
+const toast = m => { const t = $('toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2800); };
+const track = (type, detail) => fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ action: 'track', type, detail: String(detail || '').slice(0, 200) }) }).catch(() => {});
+let cinema = false, paid = false, creditsLeft = 0, photoImg = null, photoName = '';
+const myPhone = () => localStorage.getItem(LS.phone) || '';
+
+/* ---------- chat ui ---------- */
+const chat = $('chat'), main = $('main');
+function addMsg(role, html) {
+  $('hello').style.display = 'none';
+  const d = document.createElement('div');
+  d.className = 'msg' + (role === 'me' ? ' me' : '');
+  d.innerHTML = `<div class="av">${role === 'me' ? '🧑' : '🤖'}</div><div class="bub">${html}</div>`;
+  chat.appendChild(d);
+  main.scrollTop = main.scrollHeight;
+  return d.querySelector('.bub');
+}
+const say = t => addMsg('bot', t);
+const typingBubble = () => addMsg('bot', '<span class="typing"><i></i><i></i><i></i></span>');
+
+/* ---------- render engine (free, on-device) ---------- */
+const cv = document.createElement('canvas'); cv.width = 720; cv.height = 1280;
+const cx = cv.getContext('2d');
+const BPM = 100, BEAT = 60 / BPM, DUR = 8;
+const beatPhase = t => (t % BEAT) / BEAT;
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath(); c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+}
+function drawPhoto(c, x, y, w, h) {
+  if (!photoImg) return;
+  const iw = photoImg.width, ih = photoImg.height, k = Math.max(w / iw, h / ih) * 1.12;
+  const dw = iw * k, dh = ih * k;
+  c.save(); roundRect(c, x, y, w, h, 40); c.clip();
+  c.drawImage(photoImg, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  c.restore();
+}
+const STYLES = [
+  { id: 'neon', c1: '#ff2e63', c2: '#48d1cc', bg: '#12041f', label: 'نيون' },
+  { id: 'vibe', c1: '#48d1cc', c2: '#e8b04b', bg: '#04121f', label: 'فيب' },
+  { id: 'slide', c1: '#e8b04b', c2: '#ff2e63', bg: '#1f0a04', label: 'سلايدر' },
+];
+function pickStyle(p) {
+  const s = p.includes('قهوة') || p.includes('صبح') ? 2 : p.includes('بحر') || p.includes('هدوء') ? 1 : p.includes('رياضة') || p.includes('جيم') || p.includes('حب') ? 0 : 1;
+  return STYLES[s];
+}
+function drawFrame(t, prompt) {
+  const st = pickStyle(prompt);
+  const ph = beatPhase(t);
+  cx.fillStyle = st.bg; cx.fillRect(0, 0, 720, 1280);
+  const g = cx.createRadialGradient(360, 600, 60, 360, 600, 720);
+  g.addColorStop(0, st.c2 + '2a'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  cx.fillStyle = g; cx.fillRect(0, 0, 720, 1280);
+  const pulse = 1 + .035 * Math.sin(ph * Math.PI);
+  if (photoImg) {
+    cx.save(); cx.shadowColor = st.c1; cx.shadowBlur = 36 + 46 * Math.sin(ph * Math.PI);
+    cx.strokeStyle = st.c1; cx.lineWidth = 6;
+    roundRect(cx, 70 * pulse, 200 * pulse, 580 / pulse, 720 / pulse, 42); cx.stroke();
+    cx.restore();
+    drawPhoto(cx, 100, 230, 520, 660);
+  } else {
+    const em = ['☕', '🌊', '🔥', '💜', '✨'][Math.floor(t / BEAT) % 5];
+    cx.save(); cx.font = `${Math.min(400, 200 + 260 * Math.sin(ph * Math.PI))}px sans-serif`; cx.textAlign = 'center';
+    cx.globalAlpha = .25; cx.fillText(em, 360, 780); cx.restore();
+    cx.save(); cx.strokeStyle = st.c1; cx.lineWidth = 5; cx.globalAlpha = .5;
+    cx.strokeRect(100, 300, 520, 620); cx.restore();
+  }
+  for (let i = 0; i < 16; i++) {
+    const x = (i * 137 + t * 60) % 760 - 20, y = (i * 251 + t * 90) % 1280;
+    cx.fillStyle = st.c1 + '55';
+    cx.beginPath(); cx.arc(x, y, 3 + 2 * Math.sin(t + i), 0, 7); cx.fill();
+  }
+  const words = prompt.split(' ').slice(0, 6).join(' ');
+  cx.save(); cx.font = 'bold 46px "Segoe UI", Tahoma'; cx.textAlign = 'center';
+  cx.lineWidth = 9; cx.strokeStyle = 'rgba(0,0,0,.55)';
+  cx.strokeText(words, 360, 1140); cx.fillStyle = '#fff';
+  cx.fillText(words, 360, 1140); cx.restore();
+  cx.save(); cx.globalAlpha = .8; cx.font = 'bold 28px "Segoe UI", sans-serif'; cx.textAlign = 'center';
+  cx.fillStyle = 'rgba(0,0,0,.4)'; roundRect(cx, 190, 1186, 340, 44, 22); cx.fill();
+  cx.fillStyle = '#fff'; cx.fillText('EASY CODE ✨', 360, 1216); cx.restore();
+}
+function makeBeat(ctxA, dur) {
+  const dest = ctxA.createMediaStreamDestination();
+  const master = ctxA.createGain(); master.gain.value = .75; master.connect(dest);
+  for (let i = 0; i < Math.floor(dur / BEAT); i++) {
+    const tt = i * BEAT;
+    const o = ctxA.createOscillator(), gg = ctxA.createGain();
+    o.frequency.setValueAtTime(140, tt); o.frequency.exponentialRampToValueAtTime(45, tt + .12);
+    gg.gain.setValueAtTime(.8, tt); gg.gain.exponentialRampToValueAtTime(.001, tt + .22);
+    o.connect(gg); gg.connect(master); o.start(tt); o.stop(tt + .25);
+    const h = ctxA.createOscillator(), hg = ctxA.createGain();
+    h.type = 'square'; h.frequency.value = 9000;
+    hg.gain.setValueAtTime(.1, tt + BEAT / 2); hg.gain.exponentialRampToValueAtTime(.001, tt + BEAT / 2 + .05);
+    h.connect(hg); hg.connect(master); h.start(tt + BEAT / 2); h.stop(tt + BEAT / 2 + .06);
+  }
+  return dest;
+}
+async function freeRender(prompt) {
+  const bub = typingBubble();
+  bub.innerHTML = 'تمام 😎 بجهزلك الفيديو... ٨ ثواني بالظبط';
+  track('free_render', prompt);
+  try {
+    const stream = cv.captureStream(30);
+    const ctxA = new (window.AudioContext || window.webkitAudioContext)();
+    makeBeat(ctxA, DUR).stream.getAudioTracks().forEach(tr => stream.addTrack(tr));
+    const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4500000 });
+    const chunks = []; rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    const done = new Promise(r => rec.onstop = r);
+    rec.start(200);
+    const t0 = performance.now();
+    await new Promise(res => { const loop = () => { const t = (performance.now() - t0) / 1000; t >= DUR ? res() : (drawFrame(t, prompt), requestAnimationFrame(loop)); }; loop(); });
+    rec.stop(); await done; ctxA.close();
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    bub.innerHTML = `اتفضل! جاهز للنشر على تيك توك وكل حاجة 🎬<video src="${url}" controls playsinline></video><a class="dl" href="${url}" download="easy-video.webm">⬇ نزّل الفيديو</a><span class="sub">${photoName ? 'بصورتك 📷 ' : ''}لو عايز فيديو واقعي 100% بالذكاء الاصطناعي، شغّل وضع سينما AI من تحت 🎬</span>`;
+    main.scrollTop = main.scrollHeight;
+  } catch (e) {
+    bub.textContent = 'حصل خطأ في التصدير: ' + e.message;
+  }
+}
+
+/* ---------- cinema AI ---------- */
+$('cinChip').onclick = async () => {
+  cinema = !cinema;
+  $('cinChip').classList.toggle('on', cinema);
+  if (cinema) {
+    say('وضع السينما اتشغل 🎬 — اكتب أي وصف تخيلي وهطلعلك فيديو واقعي بصوت. لازم حسابك مفعّل.');
+    if (myPhone()) await refreshPaid();
+  } else {
+    say('رجعنا للوضع المجاني — فيديوهات فورية من جهازك.');
+  }
+};
+async function refreshPaid() {
+  try {
+    const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'check_payment', phone: myPhone() }) })).json();
+    paid = r.paid; creditsLeft = r.credits_left;
+    const tag = $('credTag');
+    tag.style.display = 'inline-block';
+    tag.textContent = paid ? `${creditsLeft} فيديو متاح` : 'غير مفعّل';
+    tag.className = 'tag' + (paid ? '' : ' amb');
+  } catch (e) {}
+}
+async function cinemaGenerate(prompt) {
+  if (!myPhone()) { $('paySheet').classList.add('on'); say('الوضع السينمائي محتاج تفعيل — افتحلك الشاشة، حوّل وابعته ورجع اكتب الوصف تاني.'); return; }
+  await refreshPaid();
+  if (!paid) { $('paySheet').classList.add('on'); say('حسابك لسه مفعلش — حوّل من الشاشة اللي فتحت وبعته ورجع جرب.'); return; }
+  if (creditsLeft < 1) { $('paySheet').classList.add('on'); say('خلصت فيديوهاتك — جدد من الشاشة اللي فتحت وكمّل.'); return; }
+  const bub = typingBubble();
+  bub.innerHTML = `يلا بالتوفيق 🎬 التوليد الواقعي بياخد دقيقة أو اتنين...`;
+  track('cinema_request', prompt);
+  try {
+    const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'generate', phone: myPhone(), prompt }) })).json();
+    if (!r.ok) { bub.innerHTML = '⚠ ' + r.error; if (r.code === 'not_paid' || r.code === 'no_credits') $('paySheet').classList.add('on'); return; }
+    const jobId = r.job_id;
+    for (let i = 0; i < 90; i++) {
+      await new Promise(rs => setTimeout(rs, 5000));
+      const s = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'job_status', id: jobId }) })).json();
+      if (s.status === 'completed') {
+        bub.innerHTML = `اتفضل فيديو السينما بتاعك 🎬✨<video src="${s.video_url}" controls playsinline></video><a class="dl" href="${s.video_url}" target="_blank" rel="noopener">⬇ نزّل الفيديو</a>`;
+        main.scrollTop = main.scrollHeight;
+        refreshPaid();
+        return;
+      }
+      if (s.status === 'failed') { bub.textContent = '⚠ ' + (s.error || 'التوليد فشل'); return; }
+      bub.innerHTML = `لسه شغال... ثانية ${Math.min((i + 1) * 5, 300)} 🎥`;
+    }
+    bub.textContent = 'التوليد بياخد وقت أطول من المتوقع — ابعت "وين الفيديو" وهتشوف حالته.';
+  } catch (e) { bub.textContent = '⚠ مشكلة اتصال — جرّب تاني'; }
+}
+
+/* ---------- send ---------- */
+function send() {
+  const p = $('prompt').value.trim();
+  if (!p) return;
+  $('prompt').value = ''; $('prompt').style.height = 'auto';
+  addMsg('me', p + (photoName ? ` <span class="tag">📷 ${photoName}</span>` : ''));
+  cinema ? cinemaGenerate(p) : freeRender(p);
+}
+$('sendBtn').onclick = send;
+$('prompt').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+$('prompt').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
+$('attachBtn').onclick = () => $('photoIn').click();
+$('photoIn').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => { photoImg = new Image(); photoImg.onload = () => { photoName = f.name.slice(0, 14); toast('الصورة اتضافت — هتظهر في الفيديو 📷'); }; photoImg.src = ev.target.result; };
+  r.readAsDataURL(f);
+};
+const IDEAS = ['فيديو عن القهوة الصبح ☕', 'اعلان متجر ملابس 🔥', 'افتتاحية لقناتي على تيك توك ✨', 'فيديو تحفيزي للجيم 💪'];
+IDEAS.forEach(x => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = x; b.onclick = () => { $('prompt').value = x; $('prompt').focus(); }; $('chips').appendChild(b); });
+
+/* ---------- payment sheet ---------- */
+$('proBtn').onclick = () => $('paySheet').classList.add('on');
+$('payClose').onclick = () => $('paySheet').classList.remove('on');
+async function loadPay() {
+  try {
+    const c = await (await fetch(`${API}/vsPublic`)).json();
+    if (!c.initialized) { $('payInfo').innerHTML = '<p class="sub">التفعيل هيفتح قريب 🚀</p>'; return; }
+    $('priceEl').textContent = c.price_egp;
+    $('credEl').textContent = `← ${c.credits_per_payment} فيديوهات سينما`;
+    $('wtypeEl').textContent = c.wallet_type;
+    $('wnoEl').textContent = c.wallet_number;
+    if (myPhone()) $('payPhone').value = myPhone();
+  } catch (e) { $('payInfo').innerHTML = '<p class="sub">محتاج اتصال بالإنترنت</p>'; }
+}
+$('paySubmit').onclick = async () => {
+  const phone = $('payPhone').value.trim(), ref = $('payRef').value.trim(), m = $('payMsg');
+  m.className = 'msg-notice';
+  try {
+    const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'submit_payment', phone, ref }) })).json();
+    if (r.ok) { m.classList.add('ok'); m.textContent = '✓ ' + r.message; localStorage.setItem(LS.phone, phone); }
+    else { m.classList.add('err'); m.textContent = r.error; }
+  } catch (e) { m.classList.add('err'); m.textContent = 'محتاج اتصال بالإنترنت'; }
+};
+$('payCheck').onclick = async () => {
+  const phone = $('payPhone').value.trim(), m = $('payMsg');
+  m.className = 'msg-notice';
+  try {
+    const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'check_payment', phone }) })).json();
+    if (r.paid) { localStorage.setItem(LS.phone, phone); paid = true; creditsLeft = r.credits_left; m.classList.add('ok');
+      m.textContent = `✓ مبروك! اتفعلت — معاك ${r.credits_left} فيديو سينما`; $('paySheet').classList.remove('on'); refreshPaid(); say('حسابك اتفعل 🎬✨ اكتب أي وصف فيديو واقعي وأنا أعملهولك'); }
+    else { m.classList.add('err'); m.textContent = 'لسه مفعّلش — استنى موافقة الأدمن'; }
+  } catch (e) { m.classList.add('err'); m.textContent = 'محتاج اتصال بالإنترنت'; }
+};
+
+/* ---------- admin ---------- */
+let APASS = '';
+$('adminBtn').onclick = () => { $('adminSheet').classList.add('on'); };
+$('adminClose').onclick = () => $('adminSheet').classList.remove('on');
+$('adminLoginBtn').onclick = async () => {
+  const m = $('adminMsg'); m.className = 'msg-notice';
+  try {
+    const r = await (await fetch(`${API}/vsAdmin`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'stats', password: $('adminPass').value }) })).json();
+    if (!r.ok) { m.classList.add('err'); m.textContent = r.error; return; }
+    APASS = $('adminPass').value;
+    $('adminLogin').style.display = 'none'; $('adminPanel').style.display = 'block';
+    renderStats(r);
+  } catch (e) { m.classList.add('err'); m.textContent = 'محتاج اتصال بالإنترنت'; }
+};
+function renderStats(r) {
+  $('statsBox').innerHTML = `
+    <div class="stat"><b>${r.by_type.app_open || 0}</b><i>زيارات</i></div>
+    <div class="stat"><b>${r.by_type.free_render || 0}</b><i>فيديو مجاني</i></div>
+    <div class="stat"><b>${r.by_type.cinema_request || 0}</b><i>طلبات سينما</i></div>
+    <div class="stat"><b>${r.approved_count}</b><i>مشتركين</i></div>
+    <div class="stat"><b>${r.revenue_egp} ج</b><i>إيرادات</i></div>`;
+  const P = $('pendingBox');
+  if (!r.pending.length) { P.textContent = 'مفيش طلبات معلقة.'; }
+  else P.innerHTML = '<table><tr><th>موبايل</th><th>مرجع</th><th>مبلغ</th><th>إجراء</th></tr>' +
+    r.pending.map(p => `<tr><td>${p.phone}</td><td>${p.ref}</td><td>${p.amount}</td>
+      <td><button class="mini ok" onclick="act('approve','${p.id}')">✓</button>
+      <button class="mini no" onclick="act('reject','${p.id}')">✕</button></td></tr>`).join('') + '</table>';
+}
+window.act = async (action, id) => {
+  const r = await (await fetch(`${API}/vsAdmin`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, id, password: APASS }) })).json();
+  toast(r.message || r.error);
+  const s = await (await fetch(`${API}/vsAdmin`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'stats', password: APASS }) })).json();
+  if (s.ok) renderStats(s);
+};
+$('saveSetBtn').onclick = async () => {
+  const m = $('setMsg'); m.className = 'msg-notice';
+  const r = await (await fetch(`${API}/vsAdmin`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'update_config', password: APASS,
+      wallet_type: $('setWtype').value, wallet_number: $('setWno').value.trim(),
+      price_egp: parseFloat($('setPrice').value) || 50,
+      credits_per_payment: parseInt($('setCredits').value) || 3 }) })).json();
+  if (r.ok) { m.classList.add('ok'); m.textContent = '✓ ' + r.message; }
+  else { m.classList.add('err'); m.textContent = r.error; }
+};
+
+/* ---------- boot ---------- */
+track('app_open');
+loadPay();
+if (myPhone()) refreshPaid();
+</script>
+</body>
+</html>
