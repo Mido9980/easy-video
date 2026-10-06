@@ -89,7 +89,7 @@
   .mini.ok { color:#5dd39e; border-color:#2c5a45; } .mini.no { color:#ff8fa8; border-color:#5a2233; }
   .stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 14px; display:inline-block; margin:0 6px 8px 0; min-width:100px; }
   .stat b { display:block; font-size:1.25rem; color:var(--amber); } .stat i { font-style:normal; color:var(--mut); font-size:.75rem; }
-  .toast { position:fixed; bottom:76px; left:50%; transform:translateX(-50%); background:#1a1a22; border:1px solid var(--line); border-radius:12px; padding:10px 18px; font-size:.88rem; z-index:99; display:none; max-width:88%; text-align:center; }
+  .toast { pointer-events:none; position:fixed; bottom:76px; left:50%; transform:translateX(-50%); background:#1a1a22; border:1px solid var(--line); border-radius:12px; padding:10px 18px; font-size:.88rem; z-index:99; display:none; max-width:88%; text-align:center; }
   .tag { display:inline-block; background:#20202a; color:var(--teal); border-radius:99px; padding:2px 10px; font-size:.72rem; margin:2px; }
   .tag.amb { color:var(--amber); }
   .about { text-align:center; padding:6px 0; }
@@ -134,6 +134,7 @@
   <img id="sbLogo" alt="EASY CODE">
   <div class="t">EASY <em>VIDEO</em></div>
   <div class="s">Your AI video agent</div>
+  <button class="sb-item" id="sbUser"><span class="ic">👤</span><span id="sbUserLbl">Sign in / Sign up<small>Save your videos &amp; credits</small></span></button>
   <button class="sb-item" id="sbPro"><span class="ic">✨</span><span>Get Cinema AI<small>Realistic videos with sound</small></span></button>
   <button class="sb-item" id="sbAdmin"><span class="ic">⚙</span><span>Admin Panel<small>Approvals &amp; settings</small></span></button>
   <button class="sb-item" id="sbShare"><span class="ic">📤</span><span>Share app<small>Send EASY VIDEO to a friend</small></span></button>
@@ -196,6 +197,30 @@
     <p class="sub">Apps Made Easy ✨</p>
     <p class="sub">Free videos render right on your device — no server, no limits.<br>Cinema AI gives you realistic videos with sound.</p>
     <p class="sub">More apps: <a href="https://mido9980.github.io/" style="color:var(--teal)" target="_blank" rel="noopener">mido9980.github.io</a></p>
+  </div>
+</div>
+
+<!-- user sheet -->
+<div class="sheet" id="userSheet">
+  <div class="card">
+    <button class="close" id="userClose">✕</button>
+    <h3 id="userTitle">Welcome 👋</h3>
+    <p class="sub">Sign up once — your account keeps your Cinema videos and credits on any device you log in from.</p>
+    <div id="userForm">
+      <div class="cinrow" style="justify-content:flex-start">
+        <button class="cinchip" id="tabIn">Sign in</button>
+        <button class="cinchip on" id="tabUp">First time? Sign up</button>
+      </div>
+      <div class="f" id="fName"><label>Your name</label><input id="inName" placeholder="e.g. Ahmed"></div>
+      <div class="f"><label>Mobile number</label><input id="inPhone" type="tel" placeholder="01xxxxxxxxx"></div>
+      <div class="f"><label>PIN (4-8 digits)</label><input id="inPin" type="password" inputmode="numeric" placeholder="****"></div>
+      <button class="btn t" id="userGo">Create account</button>
+    </div>
+    <div id="userInfo" style="display:none">
+      <p class="sub" id="userInfoTxt"></p>
+      <button class="btn g" id="userOut">Sign out</button>
+    </div>
+    <div class="msg-notice" id="userMsg"></div>
   </div>
 </div>
 
@@ -530,8 +555,79 @@ $('saveSetBtn').onclick = async () => {
 /* ---------- about ---------- */
 $('aboutClose').onclick = () => $('aboutSheet').classList.remove('on');
 
+/* ---------- account ---------- */
+let me = null;
+const myPin = () => localStorage.getItem('ev_pin') || '';
+$('userClose').onclick = () => $('userSheet').classList.remove('on');
+let umode = 'up';
+function setUMode(m) {
+  umode = m;
+  $('tabIn').classList.toggle('on', m === 'in');
+  $('tabUp').classList.toggle('on', m === 'up');
+  $('fName').style.display = m === 'up' ? 'block' : 'none';
+  $('userGo').textContent = m === 'up' ? 'Create account' : 'Sign in';
+  $('userMsg').className = 'msg-notice';
+}
+$('tabIn').onclick = () => setUMode('in');
+$('tabUp').onclick = () => setUMode('up');
+$('sbUser').onclick = () => {
+  closeSb();
+  const logged = !!me;
+  $('userForm').style.display = logged ? 'none' : 'block';
+  $('userInfo').style.display = logged ? 'block' : 'none';
+  $('userTitle').textContent = logged ? 'Hello ' + me.name + ' 👋' : 'Welcome 👋';
+  if (logged) $('userInfoTxt').innerHTML = 'Signed in as <b>' + me.name + '</b><br>' + me.phone;
+  else $('inPhone').value = myPhone() || '';
+  $('userMsg').className = 'msg-notice';
+  $('userSheet').classList.add('on');
+};
+$('userGo').onclick = async () => {
+  const m = $('userMsg'); m.className = 'msg-notice';
+  const phone = $('inPhone').value.trim().replace(/\D/g, '');
+  const pin = $('inPin').value.trim();
+  const name = $('inName').value.trim();
+  if (phone.length < 10 || pin.length < 4) { m.classList.add('err'); m.textContent = 'Enter a valid phone number and PIN (4+ digits)'; return; }
+  if (umode === 'up' && name.length < 2) { m.classList.add('err'); m.textContent = 'Enter your name'; return; }
+  try {
+    const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(umode === 'up' ? { action: 'signup', name, phone, pin } : { action: 'login', phone, pin }) })).json();
+    if (!r.ok) { m.classList.add('err'); m.textContent = r.error; return; }
+    me = { name: r.name, phone };
+    localStorage.setItem('ev_phone', phone);
+    localStorage.setItem('ev_pin', pin);
+    refreshUserUI();
+    $('userSheet').classList.remove('on');
+    toast(umode === 'up' ? 'Welcome ' + r.name + ' 🎉' : 'Welcome back, ' + r.name);
+    say(umode === 'up' ? 'Welcome ' + r.name + ' 🎉 Your account is ready — your Cinema videos stay with you now.' : 'Welcome back ' + r.name + ' 👋');
+    loadPay(); refreshPaid();
+  } catch (e) { m.classList.add('err'); m.textContent = 'Internet connection needed'; }
+};
+$('userOut').onclick = () => {
+  me = null; paid = false;
+  localStorage.removeItem('ev_phone'); localStorage.removeItem('ev_pin');
+  refreshUserUI();
+  $('userSheet').classList.remove('on');
+  toast('Signed out');
+};
+function refreshUserUI() {
+  $('sbUserLbl').innerHTML = me
+    ? '👤 ' + me.name + '<small>' + me.phone + '</small>'
+    : '👤 Sign in / Sign up<small>Save your videos &amp; credits</small>';
+  $('inPhone').value = myPhone() || ''; $('inPin').value = ''; $('inName').value = '';
+}
+async function autoLogin() {
+  if (!myPhone() || !myPin()) return;
+  try {
+    const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', phone: myPhone(), pin: myPin() }) })).json();
+    if (r.ok) { me = { name: r.name, phone: myPhone() }; refreshUserUI(); }
+    else localStorage.removeItem('ev_pin');
+  } catch (e) {}
+}
+
 /* ---------- boot ---------- */
 track('app_open');
+autoLogin();
 loadPay();
 if (myPhone()) refreshPaid();
 </script>
