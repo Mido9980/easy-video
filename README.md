@@ -1,17 +1,33 @@
-# 🎬 EASY VIDEO — وكيل الفيديو بتاعك
+# EASY VIDEO 🎬 — Your AI Video Agent
 
-شات زي Grok: اكتب وصف الفيديو، يطلعلك فيديو جاهز للنشر.
+*Part of the EASY CODE collection — Apps Made Easy ✨*
 
-🌐 **جرّبه:** https://mido9980.github.io/easy-video/
+**Live app:** https://mido9980.github.io/easy-video/
 
-## المميزات
-- شات بسيط وأنيق — اكتب فكرتك وابعت
-- الوضع المجاني: فيديو فوري بالقوالب المتحركة والإيقاع — شغال على جهاز المستخدم (صفر تكلفة سيرفر)
-- وضع سينما AI (مدفوع): وصف نصي → فيديو واقعي بصوت مدمج عبر fal.ai — المفتاح محفوظ على السيرفر مش في المتصفح
-- نظام دفع بمحفظة (فودافون كاش...) + تتبع كامل + لوحة تحكم للأدمن
+A Grok-style chat video agent: the user describes any idea in plain words and gets a ready-to-post 8-second video back.
 
-## البنية
-واجهة واحدة static (GitHub Pages ببلاش) + Backend functions على Base44: يتحقق من الدفع والأرصدة قبل ما يصرف أي قرش على توليد AI.
+## Features
+
+- **Free mode** — instant on-device video rendering (canvas templates + WebAudio beat + optional photo). Zero server cost, works offline.
+- **Cinema AI mode (paid)** — realistic AI videos with sound via fal.ai (Veo 3). Server-side key, pay-per-plan (default: 50 EGP = 3 videos).
+- **Accounts** — first-time sign up (name + phone + PIN), sign in, auto-login. PINs stored hashed (SHA-256).
+- **Wallet payments** — user transfers to the owner's mobile wallet, submits phone + reference, owner approves from the admin panel.
+- **EASY CODE branding** — background watermark + centered logo in every video.
+- **Admin panel** — visits, videos, requests, revenue, approvals, settings.
+
+## Run / Edit
+
+Single-file app — `index.html` is the whole frontend. Open it in any browser.
+
+Backend is a Base44 backend with two functions:
+- `vsPublic` — config, tracking, signup/login, payments, generation, job status
+- `vsAdmin` — stats, approve/reject, settings (password-protected)
+
+## Edit on your phone with SPCK
+
+1. SPCK Editor → new project → clone: `https://github.com/Mido9980/easy-video.git`
+2. When asked for credentials, use your GitHub username + Personal Access Token as password.
+3. Edit `index.html`, commit from SPCK → GitHub Pages updates automatically.
 
 ---
-<div align="center"><i>EASY CODE — Apps Made Easy ✨</i></div>
+© EASY CODE — Apps Made Easy
