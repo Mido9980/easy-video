@@ -49,7 +49,15 @@
   .inrow .attach { background:none; border:none; font-size:1.25rem; cursor:pointer; padding:4px 6px; }
   .inrow .send { background:var(--teal); color:#062523; border:none; border-radius:12px; width:38px; height:38px; font-size:1.1rem; cursor:pointer; flex:none; }
   .small { text-align:center; color:#555; font-size:.72rem; margin-top:6px; }
-  /* sidebar */
+  /* studio grid */
+.vidgrid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.vidgrid .vid { background:#15151a; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+.vidgrid video { width:100%; height:112px; object-fit:cover; display:block; background:#000; }
+.vidgrid .vt { padding:6px 8px 8px; }
+.vidgrid .vt b { display:block; font-size:.72rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.vidgrid .vt span { color:var(--mut); font-size:.65rem; }
+
+/* sidebar */
   .sb-ov { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:19; display:none; }
   .sb-ov.on { display:block; }
   .sidebar { position:fixed; top:0; left:0; bottom:0; width:min(78vw,300px); background:#0b0b0e; border-right:1px solid var(--line); z-index:20; transform:translateX(-105%); transition:transform .25s ease; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); overflow-y:auto; }
@@ -136,6 +144,7 @@
   <div class="s">Your AI video agent</div>
   <button class="sb-item" id="sbUser"><span class="ic">👤</span><span id="sbUserLbl">Sign in / Sign up<small>Save your videos &amp; credits</small></span></button>
   <button class="sb-item" id="sbPro"><span class="ic">✨</span><span>Get Cinema AI<small>Realistic videos with sound</small></span></button>
+  <button class="sb-item" id="sbStudio"><span class="ic">🎬</span><span>My Studio<small>Your profile &amp; video gallery — like TikTok</small></span></button>
   <button class="sb-item" id="sbAdmin"><span class="ic">⚙</span><span>Admin Panel<small>Approvals &amp; settings</small></span></button>
   <button class="sb-item" id="sbShare"><span class="ic">📤</span><span>Share app<small>Send EASY VIDEO to a friend</small></span></button>
   <button class="sb-item" id="sbAbout"><span class="ic">ℹ</span><span>About EASY CODE<small>Apps Made Easy</small></span></button>
@@ -157,6 +166,7 @@
     <div class="f"><label>Transfer reference number</label><input type="text" id="payRef" placeholder="e.g. VF998877"></div>
     <button class="btn a" id="paySubmit">Send activation request</button>
     <button class="btn g" id="payCheck" style="margin-top:8px">Check activation status</button>
+    <button class="btn t" id="payCard" style="display:none;margin-top:8px">💳 Pay by card — Visa / Mastercard / Meeza</button>
     <div class="msg-notice" id="payMsg"></div>
   </div>
 </div>
@@ -182,6 +192,9 @@
       <div class="f"><label>Wallet number</label><input type="text" id="setWno"></div>
       <div class="f"><label>Price (EGP)</label><input type="text" id="setPrice" inputmode="numeric"></div>
       <div class="f"><label>Videos per payment</label><input type="text" id="setCredits" inputmode="numeric"></div>
+      <div class="f"><label>Card payment link (Visa — Paymob/Kashier)</label><input type="text" id="setCardUrl" placeholder="https://..."></div>
+      <div class="f"><label>Cloudinary cloud name (free storage)</label><input type="text" id="setCloud" placeholder="e.g. easycode"></div>
+      <div class="f"><label>Cloudinary unsigned upload preset</label><input type="text" id="setPreset" placeholder="e.g. easy-video-preset"></div>
       <button class="btn t" id="saveSetBtn">Save settings</button>
       <div class="msg-notice" id="setMsg"></div>
     </div>
@@ -224,6 +237,21 @@
   </div>
 </div>
 
+<!-- studio sheet -->
+<div class="sheet" id="studioSheet">
+  <div class="card">
+    <button class="close" id="studioClose">✕</button>
+    <h3 id="studioTitle">My Studio 🎬</h3>
+    <p class="sub" id="studioSub">Your profile — post your videos and share them like TikTok.</p>
+    <button class="btn t" id="studioUpload">⬆ Post a video to my profile</button>
+    <input type="file" id="videoIn" accept="video/*" style="display:none">
+    <p class="sub" style="margin:14px 0 4px">My videos</p>
+    <div id="myVids" class="vidgrid"></div>
+    <p class="sub" style="margin:14px 0 4px">Trending on EASY VIDEO 🔥</p>
+    <div id="feedVids" class="vidgrid"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -238,6 +266,8 @@ const track = (type, detail) => fetch(`${API}/vsPublic`, { method: 'POST', heade
   body: JSON.stringify({ action: 'track', type, detail: String(detail || '').slice(0, 200) }) }).catch(() => {});
 let cinema = false, paid = false, photoImg = null, photoName = '';
 const myPhone = () => localStorage.getItem(LS.phone) || '';
+const esc = s => String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+let CLOUD = { cloud_name: '', upload_preset: '' }, CARD_URL = '';
 
 /* ---------- sidebar ---------- */
 const openSb = () => { $('sidebar').classList.add('on'); $('sbOv').classList.add('on'); };
@@ -245,6 +275,9 @@ const closeSb = () => { $('sidebar').classList.remove('on'); $('sbOv').classList
 $('menuBtn').onclick = openSb;
 $('sbOv').onclick = closeSb;
 $('sbPro').onclick = () => { closeSb(); $('paySheet').classList.add('on'); loadPay(); };
+$('sbStudio').onclick = () => { closeSb(); openStudio(); };
+$('studioClose').onclick = () => $('studioSheet').classList.remove('on');
+$('payCard').onclick = () => { if (CARD_URL) window.open(CARD_URL, '_blank'); };
 $('sbAdmin').onclick = () => { closeSb(); $('adminSheet').classList.add('on'); };
 $('sbAbout').onclick = () => { closeSb(); $('aboutSheet').classList.add('on'); };
 $('sbShare').onclick = async () => {
@@ -387,6 +420,7 @@ async function freeRender(prompt) {
     const blob = new Blob(chunks, { type: 'video/webm' });
     const url = URL.createObjectURL(blob);
     bub.innerHTML = `Here you go! Ready to post everywhere 🎬<video src="${url}" controls playsinline></video><a class="dl" href="${url}" download="easy-video.webm">⬇ Download video</a><span class="sub">${photoName ? 'With your photo 📷 ' : ''}Want a 100% realistic AI video? Turn on Cinema mode 🎬</span>`;
+    addPostBtn(bub, blob, prompt.slice(0, 40), 'local');
     main.scrollTop = main.scrollHeight;
   } catch (e) {
     bub.textContent = 'Export error: ' + e.message;
@@ -433,6 +467,7 @@ async function cinemaGenerate(prompt) {
         body: JSON.stringify({ action: 'job_status', id: jobId }) })).json();
       if (s.status === 'completed') {
         bub.innerHTML = `Here's your Cinema video 🎬✨<video src="${s.video_url}" controls playsinline></video><a class="dl" href="${s.video_url}" target="_blank" rel="noopener">⬇ Download video</a>`;
+        addPostBtn(bub, s.video_url, prompt.slice(0, 40), 'ai');
         main.scrollTop = main.scrollHeight;
         refreshPaid();
         return;
@@ -443,6 +478,74 @@ async function cinemaGenerate(prompt) {
     bub.textContent = 'Taking longer than expected — check back shortly, your video will appear here.';
   } catch (e) { bub.textContent = '⚠ Connection problem — try again'; }
 }
+
+/* ---------- studio / gallery ---------- */
+function addPostBtn(bub, source, title, kind) {
+  const b = document.createElement('button');
+  b.className = 'btn g'; b.style.margin = '8px 0 0';
+  b.textContent = '⬆ Post to my profile (My Studio)';
+  b.onclick = async () => {
+    if (!myPhone()) { toast('Sign up first (👤 in the menu) then post 🎬'); $('sbUser').onclick(); return; }
+    await doUpload(source, title || 'My video', kind);
+  };
+  bub.appendChild(b);
+}
+$('studioUpload').onclick = () => {
+  if (!myPhone()) { toast('Sign up first (👤 in the menu) 🎬'); return; }
+  $('videoIn').click();
+};
+$('videoIn').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  await doUpload(f, (f.name.replace(/\.[^.]+$/, '') || 'My video').slice(0, 40), 'upload');
+};
+async function doUpload(source, title, kind) {
+  if (!CLOUD.cloud_name || !CLOUD.upload_preset) { toast('☁ Cloud storage not activated yet — ask the owner'); return; }
+  toast('Uploading to your profile... ⬆');
+  try {
+    let blob = source instanceof Blob ? source : await (await fetch(source)).blob();
+    const fd = new FormData();
+    fd.append('file', blob, 'easy-video.' + ((blob.type || '').includes('webm') ? 'webm' : 'mp4'));
+    fd.append('upload_preset', CLOUD.upload_preset);
+    fd.append('folder', 'easy-video');
+    const r = await (await fetch(`https://api.cloudinary.com/v1_1/${CLOUD.cloud_name}/video/upload`, { method: 'POST', body: fd })).json();
+    if (r.error) { toast('⚠ ' + (r.error.message || 'Upload failed')); return; }
+    let thumb = '';
+    try { thumb = r.secure_url.replace('/upload/', '/upload/so_1/').replace(/\.[^.]+$/, '.jpg'); } catch (_) {}
+    const reg = await (await fetch(`${API}/vsVideo`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'register', phone: myPhone(), title: title || 'My video', url: r.secure_url, thumb, kind }) })).json();
+    toast(reg.ok ? 'Posted to your profile 🎉' : '⚠ ' + (reg.error || 'Failed'));
+    if (reg.ok) loadStudio();
+  } catch (err) { toast('⚠ Upload failed — check internet'); }
+}
+async function openStudio() {
+  $('studioSheet').classList.add('on');
+  $('studioTitle').textContent = 'My Studio 🎬';
+  $('studioSub').textContent = !myPhone() ? 'Sign up first — your profile keeps all your videos like TikTok.'
+    : (me ? 'Posting as ' + me.name + ' — ' + me.phone : 'Signed in as ' + myPhone());
+  loadStudio();
+}
+async function loadStudio() {
+  try {
+    const r = await (await fetch(`${API}/vsVideo`)).json();
+    $('feedVids').innerHTML = renderVids(r.videos);
+    if (myPhone()) {
+      const m = await (await fetch(`${API}/vsVideo`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mine', phone: myPhone() }) })).json();
+      $('myVids').innerHTML = renderVids(m.videos);
+    } else $('myVids').innerHTML = '<p class="sub">Sign up to see your videos here.</p>';
+  } catch (e) { $('feedVids').innerHTML = '<p class="sub">Internet connection needed</p>'; }
+}
+function renderVids(vs) {
+  if (!vs || !vs.length) return '<p class="sub">No videos yet — be the first to post! 🎬</p>';
+  return vs.map(v => `<div class="vid"><video src="${v.url}#t=0.5" preload="metadata" controls playsinline ${v.thumb ? `poster="${v.thumb}"` : ''}></video><div class="vt"><b>${esc(v.title || 'My video')}</b><span>${esc(v.name || '')} · ❤ ${v.likes || 0}${myPhone() === v.phone ? ` · <u style="cursor:pointer" onclick="delVid('${v.id}')">delete</u>` : ''}</span></div></div>`).join('');
+}
+window.delVid = async id => {
+  const r = await (await fetch(`${API}/vsVideo`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'del', id, phone: myPhone() }) })).json();
+  toast(r.ok ? 'Deleted' : '⚠ ' + (r.error || 'Failed'));
+  if (r.ok) loadStudio();
+};
 
 /* ---------- send ---------- */
 function send() {
@@ -480,6 +583,9 @@ async function loadPay() {
     $('credEl').textContent = c.credits_per_payment;
     $('wtypeEl').textContent = c.wallet_type;
     $('wnoEl').textContent = c.wallet_number;
+    CLOUD.cloud_name = c.cloud_name || ''; CLOUD.upload_preset = c.upload_preset || '';
+    CARD_URL = c.card_url || '';
+    $('payCard').style.display = CARD_URL ? 'block' : 'none';
     if (myPhone()) $('payPhone').value = myPhone();
   } catch (e) { $('payInfo').innerHTML = '<p class="sub">Internet connection needed</p>'; }
 }
@@ -547,7 +653,10 @@ $('saveSetBtn').onclick = async () => {
     body: JSON.stringify({ action: 'update_config', password: APASS,
       wallet_type: $('setWtype').value, wallet_number: $('setWno').value.trim(),
       price_egp: parseFloat($('setPrice').value) || 50,
-      credits_per_payment: parseInt($('setCredits').value) || 3 }) })).json();
+      credits_per_payment: parseInt($('setCredits').value) || 3,
+      card_url: $('setCardUrl').value.trim(),
+      cloud_name: $('setCloud').value.trim(),
+      upload_preset: $('setPreset').value.trim() }) })).json();
   if (r.ok) { m.classList.add('ok'); m.textContent = '✓ ' + r.message; }
   else { m.classList.add('err'); m.textContent = r.error; }
 };
