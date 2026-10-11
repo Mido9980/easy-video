@@ -403,7 +403,12 @@ function makeBeat(ctxA, dur) {
   }
   return dest;
 }
-async function freeRender(prompt) {
+async function freeRender(prompt, scenes, origText) {
+  /* AI scenes mode: real AI images, free */
+  if (!photoImg && Array.isArray(scenes) && scenes.length >= 2) {
+    const imgs = await loadScenes(scenes);
+    if (imgs.length >= 2) return aiRender(origText || prompt, imgs);
+  }
   const bub = typingBubble();
   bub.innerHTML = 'Got it 😎 Rendering your video... 8 seconds exactly';
   track('free_render', prompt);
@@ -423,6 +428,89 @@ async function freeRender(prompt) {
     const url = URL.createObjectURL(blob);
     bub.innerHTML = `Here you go! Ready to post everywhere 🎬<video src="${url}" controls playsinline></video><a class="dl" href="${url}" download="easy-video.webm">⬇ Download video</a><span class="sub">${photoName ? 'With your photo 📷 ' : ''}Want a 100% realistic AI video? Turn on Cinema mode 🎬</span>`;
     addPostBtn(bub, blob, prompt.slice(0, 40), 'local');
+    main.scrollTop = main.scrollHeight;
+  } catch (e) {
+    bub.textContent = 'Export error: ' + e.message;
+  }
+}
+
+/* ---------- AI scenes (free) ---------- */
+async function loadScenes(scenes) {
+  const bub = typingBubble();
+  const total = Math.min(4, scenes.length);
+  bub.innerHTML = 'Drawing AI scenes 🎨 0/' + total;
+  track('ai_scenes', String(total));
+  const grab = s => new Promise(res => {
+    const url = 'https://image.pollinations.ai/prompt/' +
+      encodeURIComponent(s + ', photorealistic, cinematic lighting, vertical composition') +
+      '?width=540&height=960&nologo=true&seed=' + Math.floor(Math.random() * 99999);
+    fetch(url).then(r => r.ok ? r.blob() : null).then(b => {
+      if (!b) return res(null);
+      const im = new Image();
+      im.onload = () => res(im); im.onerror = () => res(null);
+      im.src = URL.createObjectURL(b);
+    }).catch(() => res(null));
+  });
+  let done = 0;
+  const jobs = scenes.slice(0, 4).map(s => grab(s).then(im => {
+    done++; if (bub.isConnected) bub.innerHTML = 'Drawing AI scenes 🎨 ' + done + '/' + total;
+    return im;
+  }));
+  const got = (await Promise.all(jobs)).filter(Boolean);
+  bub.remove();
+  return got;
+}
+async function aiRender(caption, imgs) {
+  const bub = typingBubble();
+  bub.innerHTML = 'Composing your AI video 🎬';
+  track('ai_render', imgs.length + ' scenes');
+  try {
+    const stream = cv.captureStream(30);
+    const ctxA = new (window.AudioContext || window.webkitAudioContext)();
+    makeBeat(ctxA, DUR).stream.getAudioTracks().forEach(tr => stream.addTrack(tr));
+    const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4500000 });
+    const chunks = []; rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    const done = new Promise(r => rec.onstop = r);
+    const n = imgs.length, seg = DUR / n, XF = .5;
+    const fit = (im, z, ph, k) => {
+      const s = Math.max(720 / im.width, 1280 / im.height) * z;
+      const w = im.width * s, hh = im.height * s;
+      cx.drawImage(im, (720 - w) / 2 + (k % 2 ? 1 : -1) * 26 * ph, (1280 - hh) / 2 + (k % 3 ? -1 : 1) * 18 * ph, w, hh);
+    };
+    const drawAI = t => {
+      cx.fillStyle = '#000'; cx.fillRect(0, 0, 720, 1280);
+      const k = Math.min(n - 1, Math.floor(t / seg));
+      const st = t - k * seg, ph = st / seg;
+      fit(imgs[k], k % 2 ? (1.20 - .14 * ph) : (1.06 + .14 * ph), ph, k);
+      if (st > seg - XF && k < n - 1) {
+        cx.save(); cx.globalAlpha = (st - (seg - XF)) / XF;
+        fit(imgs[k + 1], (k + 1) % 2 ? 1.20 : 1.06, 0, k + 1);
+        cx.restore();
+      }
+      const g = cx.createRadialGradient(360, 640, 380, 360, 640, 880);
+      g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.5)');
+      cx.fillStyle = g; cx.fillRect(0, 0, 720, 1280);
+      if (LOGO.complete && LOGO.naturalWidth) {
+        cx.save(); cx.globalAlpha = .9; cx.shadowColor = '#48d1cc'; cx.shadowBlur = 20;
+        cx.drawImage(LOGO, 290, 66, 140, 140); cx.restore();
+      }
+      const words = (caption || '').split(' ').slice(0, 7).join(' ');
+      cx.save(); cx.font = 'bold 46px "Segoe UI", Tahoma'; cx.textAlign = 'center';
+      cx.lineWidth = 9; cx.strokeStyle = 'rgba(0,0,0,.6)'; cx.strokeText(words, 360, 1150);
+      cx.fillStyle = '#fff'; cx.fillText(words, 360, 1150); cx.restore();
+      cx.save(); cx.globalAlpha = .8; cx.font = 'bold 28px "Segoe UI", sans-serif'; cx.textAlign = 'center';
+      cx.fillStyle = 'rgba(0,0,0,.4)'; roundRect(cx, 190, 1196, 340, 44, 22); cx.fill();
+      cx.fillStyle = '#fff'; cx.fillText('EASY CODE ✨', 360, 1226); cx.restore();
+    };
+    rec.start(200);
+    const t0 = performance.now();
+    await new Promise(res => { const loop = () => { const t = (performance.now() - t0) / 1000; t >= DUR ? res() : (drawAI(t), requestAnimationFrame(loop)); }; loop(); });
+    rec.stop(); await done; ctxA.close();
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    bub.innerHTML = `Here you go! Real AI scenes, zero cost 🤖✨<video src="${url}" controls playsinline></video><a class="dl" href="${url}" download="easy-video-ai.webm">⬇ Download video</a><span class="sub">Want a 100% realistic AI video? Turn on Cinema mode 🎬</span>`;
+    addPostBtn(bub, blob, (caption || 'AI video').slice(0, 40), 'local');
     main.scrollTop = main.scrollHeight;
   } catch (e) {
     bub.textContent = 'Export error: ' + e.message;
@@ -555,15 +643,15 @@ async function send() {
   if (!p) return;
   $('prompt').value = ''; $('prompt').style.height = 'auto';
   addMsg('me', p + (photoName ? ` <span class="tag">📷 ${photoName}</span>` : ''));
-  let vp = p;
+  let vp = p, sc = null;
   const tb = typingBubble();
   try {
     const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'agent', prompt: p }) })).json();
-    if (r.ok && r.reply) { vp = r.video_prompt || p; say(r.reply); }
+    if (r.ok && r.reply) { vp = r.video_prompt || p; sc = r.scenes || null; say(r.reply); }
   } catch (e) {}
   tb.remove();
-  cinema ? cinemaGenerate(vp) : freeRender(vp);
+  cinema ? cinemaGenerate(vp) : freeRender(vp, sc, p);
 }
 $('sendBtn').onclick = send;
 $('prompt').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
