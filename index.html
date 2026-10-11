@@ -143,7 +143,7 @@
   <div class="t">EASY <em>VIDEO</em></div>
   <div class="s">Your AI video agent</div>
   <button class="sb-item" id="sbUser"><span class="ic">👤</span><span id="sbUserLbl">Sign in / Sign up<small>Save your videos &amp; credits</small></span></button>
-  <button class="sb-item" id="sbPro"><span class="ic">✨</span><span>Get Cinema AI<small>Realistic videos with sound</small></span></button>
+  <button class="sb-item" id="sbPro"><span class="ic">✨</span><span>Get Cinema AI<small>Realistic AI videos in minutes</small></span></button>
   <button class="sb-item" id="sbStudio"><span class="ic">🎬</span><span>My Studio<small>Your profile &amp; video gallery — like TikTok</small></span></button>
   <button class="sb-item" id="sbAdmin"><span class="ic">⚙</span><span>Admin Panel<small>Approvals &amp; settings</small></span></button>
   <button class="sb-item" id="sbShare"><span class="ic">📤</span><span>Share app<small>Send EASY VIDEO to a friend</small></span></button>
@@ -156,7 +156,7 @@
   <div class="card">
     <button class="close" id="payClose">✕</button>
     <h3>Activate Cinema Mode 🎬</h3>
-    <p class="sub">One payment → <b id="credEl">3</b> realistic AI videos with sound — 8 seconds each</p>
+    <p class="sub">One payment → <b id="credEl">3</b> realistic AI videos — 10 seconds each</p>
     <div class="payinfo" id="payInfo">
       <div>Price: <span class="amt"><span id="priceEl">--</span> EGP</span></div>
       <div style="margin-top:6px">Transfer to <b id="wtypeEl">...</b>:</div>
@@ -195,6 +195,8 @@
       <div class="f"><label>Card payment link (Visa — Paymob/Kashier)</label><input type="text" id="setCardUrl" placeholder="https://..."></div>
       <div class="f"><label>Cloudinary cloud name (free storage)</label><input type="text" id="setCloud" placeholder="e.g. easycode"></div>
       <div class="f"><label>Cloudinary unsigned upload preset</label><input type="text" id="setPreset" placeholder="e.g. easy-video-preset"></div>
+      <div class="f"><label>AI chat model (OrcaRouter)</label><input type="text" id="setChatModel" placeholder="deepseek/deepseek-v4-flash-free"></div>
+      <div class="f"><label>Cinema video model (OrcaRouter)</label><input type="text" id="setVideoModel" placeholder="kling/kling-v2-5-turbo"></div>
       <button class="btn t" id="saveSetBtn">Save settings</button>
       <div class="msg-notice" id="setMsg"></div>
     </div>
@@ -208,7 +210,7 @@
     <img id="abLogo" alt="EASY CODE">
     <h3>EASY <em style="color:var(--teal);font-style:normal">CODE</em></h3>
     <p class="sub">Apps Made Easy ✨</p>
-    <p class="sub">Free videos render right on your device — no server, no limits.<br>Cinema AI gives you realistic videos with sound.</p>
+    <p class="sub">Free videos render right on your device — no server, no limits.<br>Cinema AI turns your idea into a realistic video in minutes.</p>
     <p class="sub">More apps: <a href="https://mido9980.github.io/" style="color:var(--teal)" target="_blank" rel="noopener">mido9980.github.io</a></p>
   </div>
 </div>
@@ -432,7 +434,7 @@ $('cinChip').onclick = async () => {
   cinema = !cinema;
   $('cinChip').classList.toggle('on', cinema);
   if (cinema) {
-    say('Cinema mode is ON 🎬 — describe anything and I\'ll generate a realistic video with sound. Requires an active plan.');
+    say('Cinema mode is ON 🎬 — describe anything and I\'ll turn it into a realistic video in minutes. Requires an active plan.');
     if (myPhone()) await refreshPaid();
   } else {
     say('Back to free mode — instant videos rendered on your device.');
@@ -548,12 +550,20 @@ window.delVid = async id => {
 };
 
 /* ---------- send ---------- */
-function send() {
+async function send() {
   const p = $('prompt').value.trim();
   if (!p) return;
   $('prompt').value = ''; $('prompt').style.height = 'auto';
   addMsg('me', p + (photoName ? ` <span class="tag">📷 ${photoName}</span>` : ''));
-  cinema ? cinemaGenerate(p) : freeRender(p);
+  let vp = p;
+  const tb = typingBubble();
+  try {
+    const r = await (await fetch(`${API}/vsPublic`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'agent', prompt: p }) })).json();
+    if (r.ok && r.reply) { vp = r.video_prompt || p; say(r.reply); }
+  } catch (e) {}
+  tb.remove();
+  cinema ? cinemaGenerate(vp) : freeRender(vp);
 }
 $('sendBtn').onclick = send;
 $('prompt').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
@@ -631,7 +641,7 @@ function renderStats(r) {
     <div class="stat"><b>${r.by_type.free_render || 0}</b><i>Free videos</i></div>
     <div class="stat"><b>${r.by_type.cinema_request || 0}</b><i>Cinema requests</i></div>
     <div class="stat"><b>${r.approved_count}</b><i>Subscribers</i></div>
-    <div class="stat"><b>${r.revenue_egp} EGP</b><i>Revenue</i></div>`;
+    <div class="stat"><b>${r.revenue_egp} EGP</b><i>Revenue</i></div><div class="stat"><b>${r.videos_count || 0}</b><i>Videos posted</i></div>`;
   const P = $('pendingBox');
   if (!r.pending.length) { P.textContent = 'No pending requests.'; }
   else P.innerHTML = '<table><tr><th>Phone</th><th>Ref</th><th>Amount</th><th>Action</th></tr>' +
@@ -656,7 +666,9 @@ $('saveSetBtn').onclick = async () => {
       credits_per_payment: parseInt($('setCredits').value) || 3,
       card_url: $('setCardUrl').value.trim(),
       cloud_name: $('setCloud').value.trim(),
-      upload_preset: $('setPreset').value.trim() }) })).json();
+      upload_preset: $('setPreset').value.trim(),
+      chat_model: $('setChatModel').value.trim(),
+      video_model: $('setVideoModel').value.trim() }) })).json();
   if (r.ok) { m.classList.add('ok'); m.textContent = '✓ ' + r.message; }
   else { m.classList.add('err'); m.textContent = r.error; }
 };
