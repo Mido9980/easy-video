@@ -12,6 +12,7 @@
 </head>
 <body>
 
+<div class="promo" id="promo"><span data-i="promo_txt"></span><button class="promo-go" onclick="go('studio')">→</button><button class="promo-x" onclick="document.getElementById('promo').remove()">✕</button></div>
 <header class="top">
  <div class="in">
   <button class="iconbtn burger" id="burger" aria-label="menu">☰</button>
@@ -33,13 +34,20 @@
 <main>
  <!-- HOME -->
  <section class="page on" id="pg-home">
-  <div class="hero wrap">
-   <span class="kicker" data-i="kicker"></span>
-   <h1><span data-i="h1a"></span> <span class="grad" data-i="h1b"></span></h1>
-   <p class="sub" data-i="hero_sub"></p>
-   <div class="ctarow">
-    <button class="btn p" onclick="go('studio')" data-i="cta"></button>
-    <button class="btn g" onclick="go('models')" data-i="cta2"></button>
+  <div class="hero2">
+   <div class="hero2-bg" style="background-image:url('img/hero.jpg')"></div>
+   <div class="hero2-in">
+    <span class="kick2" data-i="kicker"></span>
+    <h1 class="h1b"><span data-i="h1a"></span><br><span class="grad" data-i="h1b"></span></h1>
+    <p class="sub" data-i="hero_sub"></p>
+    <button class="btn p wide" onclick="go('studio')"><span data-i="cta"></span> →</button>
+   </div>
+  </div>
+  <div class="wrap">
+   <div class="showcase"><video src="demos/i2v.mp4" poster="demos/i2v.jpg" autoplay muted loop playsinline></video></div>
+   <div class="howto">
+    <h2 class="bigh" data-i="how_h"></h2>
+    <p class="mut centerp" data-i="how_intro"></p>
    </div>
   </div>
   <div class="wrap">
@@ -53,19 +61,31 @@
     <div class="tscroll" id="feedRow"><div class="skel" style="height:200px;flex:0 0 240px"></div><div class="skel" style="height:200px;flex:0 0 240px"></div><div class="skel" style="height:200px;flex:0 0 240px"></div></div>
    </div>
    <div class="sect">
-    <h2 data-i="how_h"></h2>
-    <div class="steps">
-     <div class="step"><b>1</b><h3 data-i="how_1t"></h3><p class="mut" data-i="how_1d"></p></div>
-     <div class="step"><b>2</b><h3 data-i="how_2t"></h3><p class="mut" data-i="how_2d"></p></div>
-     <div class="step"><b>3</b><h3 data-i="how_3t"></h3><p class="mut" data-i="how_3d"></p></div>
+    <div class="steps2">
+     <div class="stepc"><h3 data-i="how_1t"></h3><p class="mut" data-i="how_1d"></p></div>
+     <div class="stepc"><h3 data-i="how_2t"></h3><p class="mut" data-i="how_2d"></p></div>
+     <div class="stepc"><h3 data-i="how_3t"></h3><p class="mut" data-i="how_3d"></p></div>
     </div>
+    <div style="text-align:center;margin-top:26px"><button class="btn p pillbtn" onclick="go('studio')" data-i="cta_img"></button></div>
+   </div>
+   <div class="sect">
+    <h2 class="bigh" data-i="uc_h"></h2>
+    <p class="mut centerp" data-i="uc_sub"></p>
+    <div class="uctabs" id="ucTabs"></div>
+    <div id="ucBox"></div>
+   </div>
+   <div class="sect">
+    <h2 class="bigh" data-i="pe_h"></h2>
+    <p class="mut centerp" data-i="pe_sub"></p>
+    <div class="pegrid" id="peGrid"></div>
    </div>
    <div class="sect">
     <h2 data-i="testi_h"></h2>
     <div class="tscroll" id="testiRow"></div>
    </div>
    <div class="sect faq">
-    <h2 data-i="faq_h"></h2>
+    <h2 class="bigh" data-i="faq_h"></h2>
+    <p class="mut centerp" data-i="faq_sub"></p>
     <div id="faqBox"></div>
    </div>
   </div>

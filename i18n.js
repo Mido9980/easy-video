@@ -2,6 +2,10 @@
 window.I18N = {
 en: {
  dir:'ltr', name:'English',
+ nav_try:'Try Free',
+ promo_txt:'3 Free AI Videos Every Day — No Credit Card Required.', cta_img:'Turn Your Image Into a Video', uc_h:'Popular Image to Video Use Cases', uc_sub:'Image-to-video can bring existing photos to life for ads, social, portraits and more.', pe_h:'Prompt Examples You Can Copy', pe_sub:'Start from a real prompt, paste it in the Studio and tweak it.', pe_copy:'Copy', pe_copied:'Copied ✓', free_badge:'FREE', ex_try:'Try this',
+ how_intro:'Creating an AI video from an image only takes three steps. Add your source image and motion idea, pick the engine and settings, then generate and review the finished video before downloading it.',
+ faq_sub:'Answers about image requirements, supported models, motion prompts, free usage, credits, watermarks, downloads and processing time.', demo_h:'See it in action', demo_watch:'Watch the demo',
  nav_home:'Home', nav_studio:'Studio', nav_models:'Models', nav_blog:'Guides', nav_library:'My Library', nav_pricing:'Pricing', nav_account:'Account', nav_admin:'Admin',
  credits:'credits', sign_in:'Sign in', hi:'Hi', free_user:'Free',
  kicker:'YOUR IMAGE IS THE FIRST FRAME', h1a:'Turn any photo', h1b:'into a cinematic video', hero_sub:'AI scenes, motion, voice and music — on your phone, in minutes. Free mode included.',
@@ -37,6 +41,10 @@ en: {
 },
 ar: {
  dir:'rtl', name:'العربية',
+ nav_try:'جرّب مجاناً',
+ promo_txt:'3 فيديوهات AI مجانية كل يوم — من غير كارت بنكي.', cta_img:'حوّل صورتك لفيديو', uc_h:'أشهر استخدامات تحويل الصورة لفيديو', uc_sub:'تحويل الصورة لفيديو بيحيّي صورك الحالية للإعلانات والسوشيال والبورتريه وأكتر.', pe_h:'أمثلة برومبت تقدر تنسخها', pe_sub:'ابدأ من برومبت حقيقي، الصقه في الاستوديو وعدّل عليه.', pe_copy:'نسخ', pe_copied:'اتنسخ ✓', free_badge:'مجاني', ex_try:'جرّبه',
+ how_intro:'عمل فيديو بالذكاء الاصطناعي من صورة بياخد 3 خطوات بس. ضيف صورتك وفكرة الحركة، اختار المحرك والإعدادات، وبعدين ولّد وراجع الفيديو قبل ما تنزله.',
+ faq_sub:'إجابات عن شروط الصور، الموديلات المدعومة، وصف الحركة، الاستخدام المجاني، الرصيد، العلامة المائية، التنزيل ووقت التنفيذ.', demo_h:'شوفه شغال', demo_watch:'شوف الديمو',
  nav_home:'الرئيسية', nav_studio:'الاستوديو', nav_models:'الموديلات', nav_blog:'أدلة', nav_library:'مكتبتي', nav_pricing:'الأسعار', nav_account:'حسابي', nav_admin:'الإدارة',
  credits:'فيديو', sign_in:'تسجيل دخول', hi:'أهلاً', free_user:'مجاني',
  kicker:'صورتك هي أول كادر في الفيديو', h1a:'حوّل أي صورة', h1b:'لفيديو سينمائي', hero_sub:'مشاهد ذكاء اصطناعي وحركة وصوت وموسيقى — من موبايلك في دقايق. وفيه وضع مجاني.',
@@ -72,6 +80,10 @@ ar: {
 },
 de: {
  dir:'ltr', name:'Deutsch',
+ nav_try:'Gratis testen',
+ promo_txt:'3 kostenlose KI-Videos täglich — keine Kreditkarte nötig.', cta_img:'Mach dein Bild zum Video', uc_h:'Beliebte Bild-zu-Video-Anwendungen', uc_sub:'Bild-zu-Video erweckt vorhandene Fotos für Werbung, Social, Porträts und mehr zum Leben.', pe_h:'Prompt-Beispiele zum Kopieren', pe_sub:'Starte mit einem echten Prompt, füge ihn im Studio ein und passe ihn an.', pe_copy:'Kopieren', pe_copied:'Kopiert ✓', free_badge:'GRATIS', ex_try:'Testen',
+ how_intro:'Ein KI-Video aus einem Bild entsteht in nur drei Schritten. Bild und Bewegungsidee hinzufügen, Engine und Einstellungen wählen, dann generieren und das fertige Video vor dem Download prüfen.',
+ faq_sub:'Antworten zu Bildanforderungen, unterstützten Modellen, Bewegungs-Prompts, Gratis-Nutzung, Credits, Wasserzeichen, Downloads und Bearbeitungszeit.', demo_h:'Live sehen', demo_watch:'Demo ansehen',
  nav_home:'Start', nav_studio:'Studio', nav_models:'Modelle', nav_blog:'Guides', nav_library:'Meine Bibliothek', nav_pricing:'Preise', nav_account:'Konto', nav_admin:'Admin',
  credits:'Credits', sign_in:'Anmelden', hi:'Hallo', free_user:'Kostenlos',
  kicker:'DEIN BILD IST DER ERSTE FRAME', h1a:'Verwandle jedes Foto', h1b:'in ein filmisches Video', hero_sub:'KI-Szenen, Bewegung, Stimme und Musik — auf dem Handy, in Minuten. Kostenloser Modus inklusive.',

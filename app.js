@@ -19,6 +19,8 @@ function applyI18n() {
   document.querySelectorAll('[data-i]').forEach(el => { const k = el.dataset.i; if (t[k] !== undefined) el.textContent = t[k]; });
   document.querySelectorAll('[data-ph]').forEach(el => { const k = el.dataset.ph; if (t[k] !== undefined) el.placeholder = t[k]; });
   buildNav(); buildLangSeg(); refreshCredPill();
+  if (typeof buildUseCases === 'function' && document.getElementById('ucTabs')) { buildUseCases(); buildPrompts(); }
+  if (typeof buildTools === 'function' && document.getElementById('toolGrid')) buildTools();
 }
 function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2600); }
 const track = (type, detail) => fetch(`${API}/vsPublic`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'track', type, detail: String(detail||'').slice(0,180) }) }).catch(()=>{});
@@ -43,8 +45,8 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 function buildNav() {
-  $('drawerNav').innerHTML = NAV.map(([id, ic]) => `<a href="#${id}" class="${location.hash === '#'+id ? 'on':''}">${ic} <span data-i="nav_${id}"></span></a>`).join('');
-  const t = T(); document.querySelectorAll('#drawerNav a span').forEach((el,i) => { const id = NAV[i][0]; el.textContent = t['nav_'+id]; });
+  $('drawerNav').innerHTML = `<a href="#studio" class="try">${T().nav_try || 'Try Free'}</a>` + NAV.filter(([id]) => id !== 'home').map(([id, ic]) => `<a href="#${id}" class="${location.hash === '#'+id ? 'on':''}"><span data-i="nav_${id}"></span>${id==='pricing'?'<span class="pricebadge">50% OFF</span>':''}</a>`).join('');
+  const t = T(); document.querySelectorAll('#drawerNav a span[data-i]').forEach(el => { el.textContent = t[el.dataset.i]; });
 }
 function buildLangSeg() {
   const box = $('langSeg'); if (!box) return;
@@ -612,24 +614,58 @@ async function ensureFeed() { if (feedLoaded) return; feedLoaded = true;
 }
 
 /* ============ static builders ============ */
-const TOOLS = [['i2v','🖼️','t_i2v','t_i2v_d'],['t2v','✍️','t_t2v','t_t2v_d'],['img','🎨','t_img','t_img_d'],['voice','🎙️','t_voice','t_voice_d'],['music','🎵','t_music','t_music_d'],['lip','🎤','t_lip','t_lip_d'],['ref','🧩','t_ref','t_ref_d'],['motion','🕹️','t_motion','t_motion_d'],['vtools','🛠️','t_vtools','t_vtools_d']];
+const TOOLS = [['i2v','t_i2v','t_i2v_d'],['t2v','t_t2v','t_t2v_d'],['img','t_img','t_img_d'],['voice','t_voice','t_voice_d'],['music','t_music','t_music_d'],['lip','t_lip','t_lip_d'],['ref','t_ref','t_ref_d'],['motion','t_motion','t_motion_d'],['vtools','t_vtools','t_vtools_d']];
+const TOOL_COVER = { i2v:'img/i2v.jpg', t2v:'img/t2v.jpg', img:'img/seed.jpg', voice:'img/voice.jpg', music:'img/lip.jpg', lip:'img/lip.jpg', ref:'img/ref.jpg', motion:'img/motion.jpg', vtools:'img/vtools.jpg' };
 function buildTools() { const t = T();
-  $('toolGrid').innerHTML = TOOLS.map(([id,ic,k,kd]) => `<div class="tcard" onclick="openTool('${id}')"><div class="ic">${ic}</div><h3>${t[k]}</h3><p class="mut">${t[kd]}</p></div>`).join(''); }
+  $('toolGrid').className = 'tgrid2';
+  $('toolGrid').innerHTML = TOOLS.map(([id,k,kd]) => `<div class="tcard2" onclick="openTool('${id}')">
+    <div class="cov"><img src="${TOOL_COVER[id]}" alt="${esc(t[k])}" loading="lazy"></div>
+    <h3>${esc(t[k])}</h3><p class="dsc">${esc(t[kd])}</p>
+    <div class="demo"><span class="lbl">▶ ${esc(t.demo_watch)}</span>
+      <video data-src="demos/${id}.mp4" poster="demos/${id}.jpg" muted loop playsinline preload="none" onclick="event.stopPropagation();this.paused?this.play():this.pause()"></video></div>
+  </div>`).join('');
+  lazyDemos();
+}
+/* demos load + autoplay only when scrolled into view (saves data on mobile) */
+function lazyDemos() {
+  const vids = document.querySelectorAll('video[data-src]');
+  if (!('IntersectionObserver' in window)) { vids.forEach(v => { v.src = v.dataset.src; }); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(()=>{}); }
+    else if (v.src) v.pause();
+  }), { threshold: .35 });
+  vids.forEach(v => io.observe(v));
+}
 window.openTool = id => { go('studio'); const b = document.querySelector(`.stab[data-tab="${id}"]`); b && b.click(); };
+let ucCur = 0;
+function buildUseCases() { const t = T(), L = LANG, U = D.usecases;
+  $('ucTabs').innerHTML = U.map((u,i) => `<button class="uctab ${i===ucCur?'on':''}" data-i2="${i}">${esc(u.tab[L])}</button>`).join('');
+  document.querySelectorAll('.uctab').forEach(b => b.onclick = () => { ucCur = +b.dataset.i2; buildUseCases(); });
+  const u = U[ucCur];
+  $('ucBox').innerHTML = `<div class="uccard"><div class="im"><img src="${u.img}" alt="${esc(u.h[L])}" loading="lazy"></div><h3>${esc(u.h[L])}</h3><p>${esc(u.p[L])}</p></div>`;
+}
+function buildPrompts() { const t = T(), L = LANG;
+  $('peGrid').innerHTML = D.promptex.map((x,i) => `<div class="pe"><div class="im"><img src="${x.img}" loading="lazy" alt=""></div>
+   <div class="tx"><p>${esc(x.t[L])}</p><button class="cp" onclick="copyPrompt(${i},this)" title="${esc(t.pe_copy)}">⧉</button></div>
+   <button class="btn g sm go" onclick="usePrompt(${i})">${esc(t.ex_try)} →</button></div>`).join('');
+}
+window.copyPrompt = (i, btn) => { navigator.clipboard.writeText(D.promptex[i].t[LANG]).then(() => { toast(T().pe_copied); btn.textContent = '✓'; setTimeout(() => btn.textContent = '⧉', 1400); }).catch(()=>{}); };
+window.usePrompt = i => { openTool('i2v'); setTimeout(() => { $('i2vPrompt').value = D.promptex[i].t[LANG]; $('t2vPrompt').value = D.promptex[i].t[LANG]; toast(T().pe_copied); }, 120); };
 function buildModels() { const t = T();
   $('modelGrid').innerHTML = D.models.map(m => `<div class="mcard">
-    <div class="mcover"><span class="mn">${{seed25:'🌊',seedfast:'⚡',kling:'🐉',wan3:'🎬',hailuo:'🌊',veo3:'✨',pixverse:'📱',ltx:'🪶',hidream:'🖼️'}[m.id]||'🎬'}</span>
+    <div class="mcover img"><img src="${m.img}" alt="${esc(m.name)}" loading="lazy">
       <span class="tag ${m.wired?'':'soon'}">${m.wired ? t.model_wired : t.model_soon}</span></div>
-    <div class="mbody"><h3>${esc(m.name)}</h3><p class="mut" style="font-size:.83rem;margin-top:6px">${esc(m.desc)}</p>
+    <div class="mbody"><h3>${esc(m.name)}${m.cost<=4?`<span class="badge-free">${esc(t.free_badge)}</span>`:''}</h3><p class="mut" style="font-size:.83rem;margin-top:6px">${esc(m.desc)}</p>
      <ul>${m.strengths.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
      <div class="crow"><span class="cost"><span class="gem2"></span>${m.cost} ${t.model_credits}</span>
      <button class="btn p sm" onclick="tryModel('${m.id}')">${t.model_try}</button></div></div></div>`).join('');
 }
 window.tryModel = id => { openTool('t2v'); toast(id === 'kling' ? (LANG==='ar'?'Kling شغال الآن في وضع السينما':'Kling is live in Cinema mode') : (LANG==='ar'?'الموديل ده هيوصّل قريب — استخدم السينما النهاردة':'Coming soon — use Cinema today')); };
-function buildTesti() { $('testiRow').innerHTML = D.testimonials.map(x => `<div class="tst"><div class="stars">★★★★★</div><p>${esc(x.t)}</p><div class="who"><b>${esc(x.n)}</b><span>${esc(x.r)}</span></div></div>`).join(''); }
+function buildTesti() { $('testiRow').innerHTML = D.testimonials.map(x => `<div class="tst"><div class="qchip">“</div><h4>${esc(x.h||'')}</h4><p>${esc(x.t)}</p><div class="who"><b>${esc(x.n)}</b>, <span class="role">${esc(x.r)}</span></div></div>`).join(''); }
 function buildFaq() { $('faqBox').innerHTML = D.faq.map(f => `<details><summary>${esc(f.q)}</summary><div class="a">${esc(f.a)}</div></details>`).join(''); }
 function buildBlog() { const t = T();
-  $('blogGrid').innerHTML = D.blog.map(b => `<div class="bcard" onclick="readBlog('${b.id}')"><div class="bcover"></div><div class="bbody"><h3>${esc(b.title)}</h3><p class="mut" style="font-size:.85rem;margin-top:8px">${esc(b.excerpt)}</p><div class="bmeta">${b.date} · ${esc(b.author)}</div></div></div>`).join(''); }
+  $('blogGrid').innerHTML = D.blog.map(b => `<div class="bcard" onclick="readBlog('${b.id}')"><div class="bcover img"><img src="${b.img}" alt="${esc(b.title)}" loading="lazy"></div><div class="bbody"><h3>${esc(b.title)}</h3><p class="mut" style="font-size:.88rem;margin-top:10px">${esc(b.excerpt)}</p><div class="bmeta"><span>📅 ${b.date}</span><span>${esc(b.author)}</span></div></div></div>`).join(''); }
 window.readBlog = id => { const b = D.blog.find(x => x.id === id); if (!b) return;
   $('articleBox').innerHTML = `<button class="btn g sm" onclick="go('blog')">← ${T().blog_back}</button>
    <h2 style="margin-top:16px">${esc(b.title)}</h2><p class="mut" style="margin:8px 0 18px">${b.date} · ${esc(b.author)}</p>
@@ -764,7 +800,7 @@ $('admSave').onclick = async () => {
 
 /* ============ boot ============ */
 (function boot() {
-  applyI18n(); buildTools(); buildStabs(); buildTesti(); buildFaq(); loadVoiceSelect(); loadConfig();
+  applyI18n(); buildTools(); buildUseCases(); buildPrompts(); buildStabs(); buildTesti(); buildFaq(); loadVoiceSelect(); loadConfig();
   route();
   if (myPhone()) refreshPaid();
   track('app_open', LANG);
