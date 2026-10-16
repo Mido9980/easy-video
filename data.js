@@ -1,0 +1,85 @@
+/* EASY VIDEO v3 — seed data (models, testimonials, FAQ, blog, plans) */
+window.DATA = {
+
+wallet_hint: 'Sent to the wallet number on screen', // fallback only
+
+models: [
+ { id:'seed25', name:'Seedance 2.5', tag:'Cinematic', cost:12, wired:false,
+   desc:'ByteDance top-tier engine for dramatic, film-like motion with strong prompt adherence.',
+   strengths:['Best-in-class camera moves','Great physics','Multi-shot storytelling'] },
+ { id:'seedfast', name:'Seedance 2.0 Fast', tag:'Fast draft', cost:6, wired:false,
+   desc:'Quick draft engine from the Seedance family — great for iterating ideas cheaply.',
+   strengths:['Fast turnaround','Good draft quality','Budget friendly'] },
+ { id:'kling', name:'Kling 2.5 Turbo', tag:'LIVE now', cost:8, wired:true,
+   desc:'Kuaishou flagship. The engine wired into our Cinema mode today — photoreal people, water, fabric.',
+   strengths:['Photoreal humans','Smooth 10s shots','Reliable queue'] },
+ { id:'wan3', name:'Wan 3.0', tag:'Open source', cost:5, wired:false,
+   desc:'Alibaba open-weights family — strong composition and painterly styles.',
+   strengths:['Style variety','Open weights','Good text handling'] },
+ { id:'hailuo', name:'Hailuo 2.3', tag:'MiniMax', cost:7, wired:false,
+   desc:'MiniMax engine loved for expressive character motion and anime looks.',
+   strengths:['Expressive faces','Anime & stylized','Strong motion'] },
+ { id:'veo3', name:'Veo 3.1', tag:'Google', cost:20, wired:false,
+   desc:'Google DeepMind engine with native audio and cinematic realism.',
+   strengths:['Native sound','Top realism','Long shots'] },
+ { id:'pixverse', name:'PixVerse v6', tag:'Social', cost:5, wired:false,
+   desc:'Tuned for social-media energy: quick cuts, punchy effects, viral transitions.',
+   strengths:['Viral templates','Fast render','Social aspect ratios'] },
+ { id:'ltx', name:'LTX 2.5', tag:'Lightweight', cost:3, wired:false,
+   desc:'Lightricks real-time family — instant previews and low-cost experiments.',
+   strengths:['Real-time preview','Cheapest tier','Simple workflow'] },
+ { id:'hidream', name:'HiDream V1', tag:'Image-first', cost:4, wired:false,
+   desc:'Image-conditioned engine — best when your uploaded photo must lead the scene.',
+   strengths:['Strong image adherence','Consistent subject','Clean edits'] },
+],
+
+testimonials: [
+ { n:'Nada H.', r:'Fashion brand owner, Cairo', t:'الموديل بقالها ثانيتين بتتحرك؟ حرفياً عامل زبائن كلهم اتصلوا. صرفت 50 جنيه وعملت إعلانات الشهر كله.' },
+ { n:'Omar S.', r:'TikTok creator', t:'الوضع الحر بيجيب مشاهد أحسن من موتاقرافات بمزاجك. السينما مود بيجيب فيديو زي الأفلام بجد.' },
+ { n:'Mariam K.', r:'Cafe owner, Alexandria', t:'بعتلهم صورة الكوباية ووصفت الجو، طلعلي ريلز جاهز للنشر في نفس الدقيقة. ده مش كلام، ده حصل.' },
+ { n:'Youssef A.', r:'Real estate marketer', t:'كنت بدفع لشركة إعلانات 3 آلاف للفيديو. دلوقتي بعمل الديمو بتاع العقار بنفسي.' },
+ { n:'Sara M.', r:'Hair salon owner', t:'الصوت المصري في الفيديوهات خلصاني من الشرح لكل عميلة. ببعت الفيديو وخلاص.' },
+ { n:'Karim T.', r:'Video editor', t:'استخدمه كمساعد قبل المونتاج — بجهز الستايل والسين في ثواني بدل ساعات.' },
+ { n:'Dina F.', r:'Online store owner', t:'الحتة دي خلتني أفتح تيك توك للمحل. أول أسبوع، 12 ألف مشاهدة من غير ما أصور حاجة.' },
+ { n:'Ahmed R.', r:'Personal trainer', t:'الفيديوهات بتحفز العملاء أحسن من كلامي. الموسيقى الجاهزة دايماً على المود.' },
+],
+
+faq: [
+ { q:'هل الفيديوهات دي AI بالكامل؟', a:'الفري مود بيرسم مشاهد AI مجانية على السيرفر بتاعنا ويحركها على جهازك. السينما مود بيستخدم محرك Kling الحقيقي — زي الأفلام، وبياخد من دقيقة لتلت دقايق.' },
+ { q:'إيه الفرق بين الفري والسينما؟', a:'الفري: بجرب ببلاش، بيه واترمارك، وسرعة فورية. السينما: فيديو واقعي 100% بجودة 1080p من غير واترمارك، وبالتفعيل بتاخد 3 فيديوهات.' },
+ { q:'أدفع إزاي؟', a:'بالتحويل على المحفظة المكتوبة في صفحة الأسعار (فودافون كاش / انستاباي وما شابه) وتبعت كود العملية. التفعيل بيوصل في دقايق. لينك الكارد متاح لو مفعّل.' },
+ { q:'فيديوهاتي بتتحفظ فين؟', a:'فيديوهات الفري بتتحفظ على جهازك فوراً. لو حابب تظهر في بروفايلك "My Studio" بتترفع على كلاود خاص بينا.' },
+ { q:'هل أقدر أستخدم الفيديوهات تجارياً؟', a:'أيوه، الفيديوهات اللي بتولدها بتاعتك وتنشرها في أي حتة. الاعتماد التجاري الرسمي والدعم بتاع خطة Elite.' },
+ { q:'بياناتي وأرقامي بتتحفظ؟', a:'بنخزن رقم موبايل واحد بس لتتبع الرصيد، ولا بنشاركه مع حد. تقدر تطلب حذف حسابك من صفحة الحساب في أي وقت.' },
+ { q:'المحتوى المحظور إيه؟', a:'مفيش سياسة ولا أشخاص حقيقيين من غير موافقتهم، ولا محتوى إساءة أو صاع للبال — دا التزام أساسي في كل منتجات EASY CODE.' },
+],
+
+blog: [
+ { id:'b1', title:'من صورة لفيديو في دقيقة: دليل 2026', date:'2026-09-28', author:'EASY CODE', cover:'none',
+   excerpt:'إزاي تحول صورة من موبايلك لفيديو سينمائي جاهز للنشر — بدون خبرة مونتاج.',
+   body:'أول حاجة: اختار صورة واضحة والموضوع فيها في النص. بعدين اكتب حركة بسيطة زي "الكاميرا تقرّب مع إضاءة دافئة". في وضع Image to Video اختار المدة 8 ثواني والنسبة 9:16 للسوشيال. الفري مود هيرسم المشهد ويحرك صورةك فوراً، ولو عايز واقعية كاملة شغل السينما مود مع Kling.\n\nنصيحة النجاح: الصور اللي فيها مساحة فاضية حوالين الموضوع بتتحرك أجمل، لأن الكاميرا بتلاقي مكان تتنفس فيه.' },
+ { id:'b2', title:'أسرار البرومبت السينمائي', date:'2026-10-04', author:'EASY CODE', cover:'none',
+   excerpt:'الفرق بين فيديو عادي وفيديو بيجيب مشاهد: 4 كلمات في مكانها.',
+   body:'المحرك بيفهم كإنك بتكتب ليه إرشادات تصوير. ابدأ بالموضوع، بعدين الحركة، بعدين الإضاءة، بعدين المود. مثال: "فتاة تركب حصان على شاطئ الغروب، الكاميرا تتبع من ورا، إضاءة ذهبية ناعمة، إحساس حرية".\n\nكلمات بتعمل فرق كبير: cinematic, golden hour, slow motion, handheld. وكلمات بتبوظ: "أجمل فيديو في العالم" — المحرك مش بيعرف يجاوب على الأحكام، بيحتاج وصف.' },
+ { id:'b3', title:'فيديوهات المنتجات: 5 قوالب بتبيع', date:'2026-10-09', owner:true, author:'EASY CODE', cover:'none',
+   excerpt:'القوالب اللي شغال مع أصحاب المتاجر في مصر — جاهزة للنسخ.',
+   body:'1. الكوباية/المنتج في النص والإضاءة بتدور حواليه. 2. لقطة الإيد بتمسك المنتج مع دخول ضوء. 3. المنتج في مكانه الطبيعي (المطبخ، الترابيزة) مع حركة بطيئة. 4. الافتتاح بسيط: اسم المنتج يطلع مع نغم. 5. قبل/بعد لو الخدمة بتفرق.\n\nالسر مش في الفيديو — في الصورة اللي بتقنع. شوف الفيديو كأنك العميل: عايز تشوف المنتج حقيقي وقريب.' },
+ { id:'b4', title:'الذكاء الاصطناعي وأخلاق المحتوى', date:'2026-10-14', author:'EASY CODE', cover:'none',
+   excerpt:'ليه بنمنع تنفيذ وجه شخص حقيقي من غير إذنه؟ وثيقة العمل بتاعتنا.',
+   body:'كل منتجات EASY CODE بتشتغل بقواعد أخلاقية مدمجة: مفيش تصوير أشخاص حقيقيين من غير موافقتهم، مفيش محتوى سياسي أو مسيء أو بيخالف قيم المجتمع المصري والعربي. ده مش عائق تسويقي — ده اللي بيخلي المنتج آمن لأي بيزنس يعرضه على عملائه.\n\nلو فيديو اترفض من الفلتر، بتلاقي بديل آمن مقترح بدل الرفض الصامت.' },
+],
+
+plans: [
+ { id:'free', name:'Free', price:0, unit:'', pop:false,
+   feats:['10 free drafts / month','720p exports','EASY CODE watermark','On-device + free AI scenes','All tools unlocked'] },
+ { id:'pro', name:'Pro', price:50, unit:'EGP', pop:true,
+   feats:['3 Cinema videos (Kling)','1080p, no watermark','Priority queue','Commercial use','Download master file'] },
+ { id:'elite', name:'Elite', price:120, unit:'EGP', pop:false,
+   feats:['9 Cinema videos','Fastest priority','Commercial license','API access (soon)','Direct support line'] },
+],
+packs: [
+ { name:'Starter', credits:'3 Cinema videos', price:50 },
+ { name:'Studio', credits:'9 Cinema videos', price:120 },
+ { name:'Agency', credits:'25 Cinema videos', price:250 },
+],
+};

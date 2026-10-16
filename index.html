@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EASY VIDEO — AI Video Studio</title>
+<meta name="description" content="EASY VIDEO: turn images and ideas into cinematic AI videos. Free mode included. By EASY CODE.">
+<meta name="theme-color" content="#0A0E14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+ <div class="in">
+  <button class="iconbtn burger" id="burger" aria-label="menu">☰</button>
+  <div class="logo" onclick="go('home')"><span class="gem">💎</span>Easy<span class="v">Video</span></div>
+  <div class="spacer"></div>
+  <button class="pill" id="credPill" onclick="go('pricing')"><span class="gem2"></span><span id="credNum">…</span> <span data-i="credits"></span></button>
+  <button class="globe iconbtn" id="globeBtn" aria-label="language">🌐</button>
+  <button class="iconbtn" id="avatarBtn" onclick="go('account')">👤</button>
+ </div>
+</header>
+
+<nav class="drawer" id="drawer">
+ <div class="pan">
+  <div class="logo"><span class="gem">💎</span>Easy<span class="v">Video</span></div>
+  <div class="nav" id="drawerNav"></div>
+ </div>
+</nav>
+
+<main>
+ <!-- HOME -->
+ <section class="page on" id="pg-home">
+  <div class="hero wrap">
+   <span class="kicker" data-i="kicker"></span>
+   <h1><span data-i="h1a"></span> <span class="grad" data-i="h1b"></span></h1>
+   <p class="sub" data-i="hero_sub"></p>
+   <div class="ctarow">
+    <button class="btn p" onclick="go('studio')" data-i="cta"></button>
+    <button class="btn g" onclick="go('models')" data-i="cta2"></button>
+   </div>
+  </div>
+  <div class="wrap">
+   <div class="sect">
+    <div class="hrow"><h2 data-i="tools_h"></h2></div>
+    <p class="mut" data-i="tools_sub"></p>
+    <div class="tgrid" id="toolGrid"></div>
+   </div>
+   <div class="sect">
+    <div class="hrow"><h2 data-i="gallery_h"></h2></div>
+    <div class="tscroll" id="feedRow"><div class="skel" style="height:200px;flex:0 0 240px"></div><div class="skel" style="height:200px;flex:0 0 240px"></div><div class="skel" style="height:200px;flex:0 0 240px"></div></div>
+   </div>
+   <div class="sect">
+    <h2 data-i="how_h"></h2>
+    <div class="steps">
+     <div class="step"><b>1</b><h3 data-i="how_1t"></h3><p class="mut" data-i="how_1d"></p></div>
+     <div class="step"><b>2</b><h3 data-i="how_2t"></h3><p class="mut" data-i="how_2d"></p></div>
+     <div class="step"><b>3</b><h3 data-i="how_3t"></h3><p class="mut" data-i="how_3d"></p></div>
+    </div>
+   </div>
+   <div class="sect">
+    <h2 data-i="testi_h"></h2>
+    <div class="tscroll" id="testiRow"></div>
+   </div>
+   <div class="sect faq">
+    <h2 data-i="faq_h"></h2>
+    <div id="faqBox"></div>
+   </div>
+  </div>
+ </section>
+
+ <!-- STUDIO -->
+ <section class="page" id="pg-studio">
+  <div class="wrap">
+   <h2 data-i="studio_h"></h2>
+   <p class="mut" data-i="tools_sub"></p>
+   <div class="stabs" id="stabs"></div>
+
+   <div class="spanel" id="sp-i2v">
+    <div class="card">
+     <label data-i="up_image"></label>
+     <div class="drop" id="i2vDrop" data-i="up_hint"></div>
+     <div class="frow">
+      <div><label data-i="motion_prompt"></label><textarea id="i2vPrompt" data-ph="prompt_ph"></textarea></div>
+     </div>
+     <div class="frow">
+      <div><label data-i="duration"></label><div class="seg" data-seg="i2vDur"><button class="on">5s</button><button>8s</button><button>10s</button></div></div>
+      <div><label data-i="aspect"></label><div class="seg" data-seg="i2vAsp"><button class="on">9:16</button><button>16:9</button><button>1:1</button></div></div>
+      <div><label data-i="quality"></label><div class="seg" data-seg="i2vQ"><button class="on">720p</button><button>1080p</button></div></div>
+      <div><label data-i="audio_lbl"></label><div class="seg" data-seg="i2vAud"><button class="on">beat</button><button>off</button></div></div>
+     </div>
+     <div class="modes">
+      <button class="btn p" id="i2vGo" data-i="gen_btn"></button>
+      <button class="btn g" id="i2vCin" data-i="cinema_btn"></button>
+     </div>
+     <span class="note" data-i="watermark_note"></span>
+     <div class="res" id="i2vRes"></div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-t2v">
+    <div class="card">
+     <label data-i="motion_prompt"></label>
+     <textarea id="t2vPrompt" data-ph="prompt_ph"></textarea>
+     <label style="margin-top:12px" data-i="style_presets"></label>
+     <div class="seg" id="styleSeg"></div>
+     <div class="modes">
+      <button class="btn p" id="t2vGo" data-i="gen_btn"></button>
+      <button class="btn g" id="t2vCin" data-i="cinema_btn"></button>
+     </div>
+     <span class="note" data-i="watermark_note"></span>
+     <div class="res" id="t2vRes"></div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-img">
+    <div class="card">
+     <label data-i="motion_prompt"></label>
+     <textarea id="imgPrompt" data-ph="prompt_ph"></textarea>
+     <div class="modes"><button class="btn p" id="imgGo" data-i="gen_img_btn"></button></div>
+     <span class="note">Free AI images — 4 variations every time.</span>
+     <div class="res"><div class="grid4" id="imgRes"></div></div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-voice">
+    <div class="card">
+     <label data-i="voice_text"></label>
+     <textarea id="voiceText">صباح الفل! معاك EASY VIDEO، وفيه مفاجأة في الآخر.</textarea>
+     <div class="frow">
+      <div><label data-i="voice_pick"></label><select id="voicePick"></select></div>
+      <div><label data-i="voice_line1"></label><input type="text" id="voiceL1" value="إيه الأخبار يا صديقي؟"></div>
+      <div><label data-i="voice_line2"></label><input type="text" id="voiceL2" value="كل حاجة سهلة مع EASY VIDEO."></div>
+     </div>
+     <div class="modes">
+      <button class="btn p" id="voiceSpeak" data-i="voice_speak"></button>
+      <button class="btn g" id="voiceDuo" data-i="voice_duo"></button>
+     </div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-music">
+    <div class="card">
+     <div class="frow">
+      <div><label data-i="music_genre"></label><div class="seg" data-seg="musVibe"><button class="on">lofi</button><button>trap</button><button>cinematic</button></div></div>
+      <div><label data-i="duration"></label><div class="seg" data-seg="musDur"><button class="on">8s</button><button>15s</button></div></div>
+     </div>
+     <div class="modes">
+      <button class="btn p" id="musMake" data-i="music_make"></button>
+      <button class="btn g" id="musStop" data-i="music_stop" style="display:none"></button>
+     </div>
+     <span class="note" data-i="music_note"></span>
+     <div class="res" id="musRes"></div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-lip">
+    <div class="card">
+     <div class="uprow">
+      <div class="cell" id="lipA" data-i="lip_role1"></div>
+      <div class="cell" id="lipB" data-i="lip_role2"></div>
+     </div>
+     <div class="frow" style="margin-top:14px">
+      <div><label data-i="lip_role1"></label><input type="text" id="lipN1" value="El Don"></div>
+      <div><label data-i="lip_role2"></label><input type="text" id="lipN2" value="Shams"></div>
+     </div>
+     <label data-i="lip_lyrics"></label>
+     <textarea id="lipTxt">يا أهلاً بالجميع من غير مقدمات
+الأغنية دي عملها الذكاء الاصطناعي
+مونتاجي بالذكاء والكلام سريع
+EASY CODE للأبد والباقي تقيل</textarea>
+     <div class="modes"><button class="btn p" id="lipGo" data-i="lip_make"></button></div>
+     <span class="note" data-i="lip_note"></span>
+     <div class="res" id="lipRes"></div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-ref">
+    <div class="card">
+     <label data-i="up_image"></label>
+     <div class="uprow" id="refRow"></div>
+     <span class="note" data-i="ref_note"></span>
+     <div class="frow">
+      <div><label data-i="motion_prompt"></label><textarea id="refPrompt" data-ph="prompt_ph"></textarea></div>
+     </div>
+     <div class="modes"><button class="btn p" id="refGo" data-i="gen_btn"></button></div>
+     <div class="res" id="refRes"></div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-motion">
+    <div class="card">
+     <label data-i="up_image"></label>
+     <div class="drop" id="mDrop" data-i="up_hint"></div>
+     <div class="frow">
+      <div><label data-i="motion_pick"></label><div class="seg" data-seg="mPre"><button class="on">zoom-in</button><button>orbit</button><button>bounce</button><button>pan</button></div></div>
+      <div><label data-i="duration"></label><div class="seg" data-seg="mDur"><button class="on">8s</button><button>10s</button></div></div>
+     </div>
+     <div class="modes"><button class="btn p" id="mGo" data-i="gen_btn"></button></div>
+     <div class="res" id="mRes"></div>
+    </div>
+   </div>
+
+   <div class="spanel" id="sp-vtools">
+    <div class="card">
+     <label data-i="vt_pick"></label>
+     <div class="drop" id="vtDrop" data-i="up_hint"></div>
+     <div class="modes">
+      <button class="btn p" id="vtUp" data-i="vt_up"></button>
+      <button class="btn g" id="vtBg" data-i="vt_bg"></button>
+      <button class="btn g" id="vtExt" data-i="vt_ext"></button>
+      <button class="btn g" id="vtAud" data-i="vt_audio"></button>
+     </div>
+     <span class="note" data-i="vt_note"></span>
+     <div class="res" id="vtRes"></div>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <!-- MODELS -->
+ <section class="page" id="pg-models">
+  <div class="wrap">
+   <h2 data-i="models_h"></h2>
+   <p class="mut" data-i="models_sub"></p>
+   <div class="mgrid" id="modelGrid"></div>
+  </div>
+ </section>
+
+ <!-- BLOG -->
+ <section class="page" id="pg-blog">
+  <div class="wrap">
+   <h2 data-i="blog_h"></h2>
+   <p class="mut" data-i="blog_sub"></p>
+   <div class="bgrid" id="blogGrid"></div>
+  </div>
+ </section>
+ <section class="page" id="pg-article">
+  <div class="wrap" id="articleBox"></div>
+ </section>
+
+ <!-- LIBRARY -->
+ <section class="page" id="pg-library">
+  <div class="wrap">
+   <h2 data-i="lib_h"></h2>
+   <p class="mut" data-i="lib_sub"></p>
+   <div class="lgrid" id="libGrid"></div>
+  </div>
+ </section>
+
+ <!-- PRICING -->
+ <section class="page" id="pg-pricing">
+  <div class="wrap">
+   <h2 data-i="pricing_h"></h2>
+   <p class="mut" data-i="pricing_sub"></p>
+   <div class="seg" style="margin-top:14px" id="cycleSeg"><button class="on" data-i="plan_mo"></button><button data-i="plan_yr"></button></div>
+   <div class="pgrid" id="planGrid"></div>
+   <h3 style="margin-top:34px" data-i="pack_h"></h3>
+   <div class="packs" id="packGrid"></div>
+  </div>
+ </section>
+
+ <!-- PAYMENT -->
+ <section class="page" id="pg-pay">
+  <div class="wrap">
+   <h2 data-i="pay_h"></h2>
+   <div class="card" id="payCardBox">
+    <div class="frow">
+     <div><label data-i="pay_amount"></label><input type="text" id="payAmount" readonly></div>
+     <div><label data-i="pay_wallet"></label><input type="text" id="payWallet" readonly></div>
+    </div>
+    <div class="frow">
+     <div><label data-i="acc_phone"></label><input type="tel" id="payPhone"></div>
+     <div><label data-i="pay_ref"></label><input type="text" id="payRef"></div>
+    </div>
+    <div class="modes">
+     <button class="btn p" id="paySubmit" data-i="pay_submit"></button>
+     <button class="btn g" id="payCheck" data-i="pay_check"></button>
+     <button class="btn g" id="payCardBtn" style="display:none" data-i="pay_card"></button>
+    </div>
+    <span class="msg-notice" id="payMsg"></span>
+    <span class="note" data-i="pay_note"></span>
+   </div>
+  </div>
+ </section>
+
+ <!-- ACCOUNT -->
+ <section class="page" id="pg-account">
+  <div class="wrap">
+   <h2 data-i="acc_h"></h2>
+   <div class="card" id="acctBox">
+    <div class="frow">
+     <div><label data-i="acc_name"></label><input type="text" id="accName"></div>
+     <div><label data-i="acc_phone"></label><input type="tel" id="accPhone"></div>
+     <div><label data-i="acc_pin"></label><input type="password" id="accPin"></div>
+    </div>
+    <div class="modes">
+     <button class="btn p" id="accGo" data-i="acc_signup"></button>
+     <button class="btn g" id="accToggle" data-i="acc_signin"></button>
+     <button class="btn g" id="accLogout" style="display:none" data-i="acc_logout"></button>
+    </div>
+    <span class="msg-notice" id="accMsg"></span>
+   </div>
+   <div class="card" id="acctInfo" style="display:none">
+    <div class="statrow">
+     <div class="stat"><b id="stCredits">0</b><i data-i="acc_credits"></i></div>
+     <div class="stat"><b id="stName">—</b><i data-i="acc_name"></i></div>
+     <div class="stat"><b id="stStatus">Free</b><i data-i="cinema_mode"></i></div>
+    </div>
+    <div style="margin-top:18px"><label data-i="acc_referral"></label>
+     <div class="copyrow"><input type="text" id="refLink" readonly><button class="btn p sm" id="refCopy" data-i="acc_copy"></button></div>
+     <span class="note" data-i="acc_ref_d"></span>
+    </div>
+    <div style="margin-top:18px"><label data-i="acc_lang"></label><div class="seg" id="langSeg"></div></div>
+    <div style="margin-top:18px"><label data-i="acc_byok"></label><p class="mut" data-i="acc_byok_d"></p></div>
+    <div style="margin-top:18px"><label data-i="acc_del"></label><p class="mut" data-i="acc_del_d"></p>
+     <button class="mini no" id="accDel" data-i="acc_del"></button>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <!-- ADMIN -->
+ <section class="page" id="pg-admin">
+  <div class="wrap">
+   <h2 data-i="adm_h"></h2>
+   <div class="card" id="admLogin">
+    <label data-i="adm_pass"></label>
+    <input type="password" id="admPass">
+    <div class="modes"><button class="btn p" id="admGo" data-i="adm_login"></button></div>
+    <span class="msg-notice" id="admMsg"></span>
+   </div>
+   <div id="admPanel" style="display:none">
+    <div class="statrow" id="admStats"></div>
+    <div class="card"><h3 data-i="adm_pending"></h3><div id="admPending"></div></div>
+    <div class="card"><h3 data-i="adm_cfg"></h3>
+     <div class="frow">
+      <div><label data-i="adm_wtype"></label><input type="text" id="setWtype"></div>
+      <div><label data-i="adm_wno"></label><input type="text" id="setWno"></div>
+      <div><label data-i="adm_price"></label><input type="number" id="setPrice"></div>
+      <div><label data-i="adm_cper"></label><input type="number" id="setCredits"></div>
+     </div>
+     <div class="frow">
+      <div><label data-i="adm_card"></label><input type="text" id="setCardUrl"></div>
+      <div><label data-i="adm_cloud"></label><input type="text" id="setCloud"></div>
+      <div><label data-i="adm_preset"></label><input type="text" id="setPreset"></div>
+     </div>
+     <div class="frow">
+      <div><label data-i="adm_chat_model"></label><input type="text" id="setChatModel"></div>
+      <div><label data-i="adm_video_model"></label><input type="text" id="setVideoModel"></div>
+     </div>
+     <div class="modes"><button class="btn p" id="admSave" data-i="adm_save"></button></div>
+     <span class="msg-notice" id="admSaveMsg"></span>
+    </div>
+   </div>
+  </div>
+ </section>
+</main>
+
+<footer>
+ <div class="flogo">💎 Easy<span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent">Video</span> — <span data-i="footer_tag"></span></div>
+ <p style="margin-top:6px" data-i="footer_cr"></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
