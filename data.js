@@ -4,11 +4,12 @@ window.DATA = {
 wallet_hint: 'Sent to the wallet number on screen', // fallback only
 
 models: [
- { id:'seed25', img:'img/seed.jpg', name:'Seedance 2.5', tag:'Cinematic', cost:12, wired:false,
-   desc:'ByteDance top-tier engine for dramatic, film-like motion with strong prompt adherence.',
-   strengths:['Best-in-class camera moves','Great physics','Multi-shot storytelling'] },
+ { id:'seed20', img:'img/seed.jpg', name:'Seedance 2.0', tag:'Multimodal DiT', cost:12, wired:false,
+   external:'https://seedance2.plus',
+   desc:'Unified multimodal engine (Dual-branch DiT): picture, dialogue, lip-sync and ambient sound in one pass, 1080p output. Hosted only on its official platform.',
+   strengths:['Native audio + lip-sync','Physics-accurate motion','Director-level camera control','9 reference images'] },
  { id:'seedfast', img:'img/seed.jpg', name:'Seedance 2.0 Fast', tag:'Fast draft', cost:6, wired:false,
-   desc:'Quick draft engine from the Seedance family — great for iterating ideas cheaply.',
+   desc:'Quick draft mode of the same family — cheap iterations before you go final.',
    strengths:['Fast turnaround','Good draft quality','Budget friendly'] },
  { id:'kling', img:'img/kling.jpg', name:'Kling 2.5 Turbo', tag:'LIVE now', cost:8, wired:true,
    desc:'Kuaishou flagship. The engine wired into our Cinema mode today — photoreal people, water, fabric.',

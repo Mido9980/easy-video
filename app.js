@@ -659,7 +659,9 @@ function buildModels() { const t = T();
     <div class="mbody"><h3>${esc(m.name)}${m.cost<=4?`<span class="badge-free">${esc(t.free_badge)}</span>`:''}</h3><p class="mut" style="font-size:.83rem;margin-top:6px">${esc(m.desc)}</p>
      <ul>${m.strengths.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
      <div class="crow"><span class="cost"><span class="gem2"></span>${m.cost} ${t.model_credits}</span>
-     <button class="btn p sm" onclick="tryModel('${m.id}')">${t.model_try}</button></div></div></div>`).join('');
+     ${m.external
+       ? `<a class="btn g sm" href="${m.external}" target="_blank" rel="noopener">${LANG==='ar'?'جرّبه على موقعهم':'Try on official site'} ↗</a>`
+       : `<button class="btn p sm" onclick="tryModel('${m.id}')">${t.model_try}</button>`}</div></div></div>`).join('');
 }
 window.tryModel = id => { openTool('t2v'); toast(id === 'kling' ? (LANG==='ar'?'Kling شغال الآن في وضع السينما':'Kling is live in Cinema mode') : (LANG==='ar'?'الموديل ده هيوصّل قريب — استخدم السينما النهاردة':'Coming soon — use Cinema today')); };
 function buildTesti() { $('testiRow').innerHTML = D.testimonials.map(x => `<div class="tst"><div class="qchip">“</div><h4>${esc(x.h||'')}</h4><p>${esc(x.t)}</p><div class="who"><b>${esc(x.n)}</b>, <span class="role">${esc(x.r)}</span></div></div>`).join(''); }
