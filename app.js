@@ -297,6 +297,11 @@ const STYLES = ['cinematic','anime','3D render','neon','vintage'];
 $('styleSeg').innerHTML = STYLES.map((s,i) => `<button class="${i?'':'on'}">${s}</button>`).join('');
 $('styleSeg').addEventListener('click', e => { if (e.target.tagName!=='BUTTON') return;
   $('styleSeg').querySelectorAll('button').forEach(b=>b.classList.remove('on')); e.target.classList.add('on'); });
+function prependBrain(box, reply) {
+  const n = document.createElement('div'); n.className = 'note';
+  n.style.cssText = 'margin:0 0 10px;color:var(--tx);opacity:.9';
+  n.textContent = '🤖 ' + reply; box.prepend(n);
+}
 async function freeT2v() {
   const p = $('t2vPrompt').value.trim();
   if (!p) return toast(LANG==='ar'?'اكتب فكرة الأول':LANG==='de'?'Schreibe zuerst eine Idee':'Describe your idea first');
@@ -327,12 +332,14 @@ async function freeT2v() {
     const fb = await templateRender(p, 8);
     const url = addLib(fb.blob, p.slice(0,40), 't2v');
     showRes(box, url, p.slice(0,40), 'local');
+    if (brainReply) prependBrain(box, brainReply);
     track('t2v_fallback', p.slice(0,60));
     btn.disabled = false; btn.textContent = T().gen_btn; return;
   }
   const r2 = await aiRender(imgs, p.slice(0,40), 8, '9:16', 720, true);
   const url = addLib(r2.blob, p.slice(0,40), 't2v');
   showRes(box, url, p.slice(0,40), 'local');
+  if (brainReply) prependBrain(box, brainReply);
   track('t2v_free', p.slice(0,80));
   btn.disabled = false; btn.textContent = T().gen_btn;
 }
