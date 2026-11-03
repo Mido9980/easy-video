@@ -305,11 +305,19 @@ async function freeT2v() {
   const style = segVal('styleSeg') || 'cinematic';
   const box = $('t2vRes');
   box.innerHTML = '<div class="skel" style="height:200px"></div>';
-  let scenes = null;
+  let scenes = null, brainReply = '';
   try {
-    const r = await (await fetch(`${API}/vsPublic`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'agent', prompt: p }) })).json();
-    if (r.ok && r.scenes) scenes = r.scenes;
+    const r = await (await fetch(`${API}/evBrain`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt: p }) })).json();
+    if (r.ok) { if (r.scenes) scenes = r.scenes; brainReply = r.reply || ''; }
   } catch (e) {}
+  if (!scenes) {
+    try {
+      const r = await (await fetch(`${API}/vsPublic`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'agent', prompt: p }) })).json();
+      if (r.ok && r.scenes) scenes = r.scenes;
+      if (!brainReply && r.ok && r.reply) brainReply = r.reply;
+    } catch (e) {}
+  }
+  if (brainReply) box.innerHTML = `<div class="note" style="margin-bottom:10px">🤖 ${esc(brainReply)}</div><div class="skel" style="height:200px"></div>`;
   const prompts = scenes && scenes.length >= 2 ? scenes : [p, p + ', different angle', p + ', dramatic close-up', p + ', wide shot'];
   const themed = prompts.map(s => s + ', ' + style + ' style, vertical');
   let imgs = await sceneImgs(themed, d => box.innerHTML = `<div class="skel" style="height:200px"></div><span class="note">🎨 ${d}/4</span>`);
